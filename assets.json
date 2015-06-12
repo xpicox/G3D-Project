@@ -1,0 +1,27 @@
+{
+	"assets" : [
+		{ 
+			"name" 	: "garage",
+			"type" 	: 0,
+			"url" 	: "media/garage/garage.json"
+		},
+
+		{
+			"name" 	: "lamborghini",
+			"type" 	: 0,
+			"url" 	: "media/lamborghini/lamborghini.json"
+		},
+
+		{
+			"name" 	: "garageDiffuseMap",
+			"type" 	: 2,
+			"url" 	: "media/garage/T_Concrete_Poured_D.jpg"
+		},
+
+		{
+			"name"	: "garageCubeMap",
+			"type" 	: 2,
+			"url" 	: "media/garage/GarageCUBE.jpg"
+		}
+	]
+}
