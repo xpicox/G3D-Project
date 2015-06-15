@@ -4,7 +4,7 @@
 			"constructor" : "Asset",
 			"name" 	: "garage",
 			"type" 	: "MODEL",
-			"url" 	: "media/garage/garage.json"
+			"url" 	: "media/garage/Garage.json"
 		},
 
 		{
@@ -32,14 +32,14 @@
 			"constructor" : "Asset",
 			"name"	: "uberVertexShader",
 			"type" 	: "SHADER",
-			"url" 	: "/media/materials/vertexShader.glsl"
+			"url" 	: "media/materials/vertexShader.glsl"
 		},
 
 		{
 			"constructor" : "Asset",
 			"name"	: "uberFragmentShader",
 			"type" 	: "SHADER",
-			"url" 	: "/media/materials/fragmentShader.glsl"
+			"url" 	: "media/materials/fragmentShader.glsl"
 		}
 	],
 
