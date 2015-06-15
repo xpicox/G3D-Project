@@ -1,27 +1,65 @@
 {
 	"assets" : [
-		{ 
+		{	
+			"constructor" : "Asset",
 			"name" 	: "garage",
-			"type" 	: 0,
+			"type" 	: "MODEL",
 			"url" 	: "media/garage/garage.json"
 		},
 
 		{
+			"constructor" : "Asset",
 			"name" 	: "lamborghini",
-			"type" 	: 0,
+			"type" 	: "MODEL",
 			"url" 	: "media/lamborghini/lamborghini.json"
 		},
 
 		{
+			"constructor" : "Asset",
 			"name" 	: "garageDiffuseMap",
-			"type" 	: 2,
+			"type" 	: "JPGTEXTURE",
 			"url" 	: "media/garage/T_Concrete_Poured_D.jpg"
 		},
 
 		{
+			"constructor" : "Asset",
 			"name"	: "garageCubeMap",
-			"type" 	: 2,
+			"type" 	: "JPGTEXTURE",
 			"url" 	: "media/garage/GarageCUBE.jpg"
+		},
+
+		{
+			"constructor" : "Asset",
+			"name"	: "uberVertexShader",
+			"type" 	: "SHADER",
+			"url" 	: "/media/materials/vertexShader.glsl"
+		},
+
+		{
+			"constructor" : "Asset",
+			"name"	: "uberFragmentShader",
+			"type" 	: "SHADER",
+			"url" 	: "/media/materials/fragmentShader.glsl"
 		}
+	],
+
+	"materials" : [
+		{
+			"name" 				: "lamborghiniMainBody",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 1
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.8, "y" : 0.0, "z" : 0.0 } },
+									"specular_color"	:	{ "type": "v3", "value": { "x" : 1.0, "y" : 1.0, "z" : 1.0 } },
+									"roughness"			: 	{ "type": "f", "value": 0.0 },
+									"metallic"			: 	{ "type": "f", "value": 0.0 },
+									"specular" 			: 	{ "type": "f", "value": 0.8 }
+								  },
+			"lights"			: true
+		} 
 	]
 }
