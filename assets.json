@@ -40,13 +40,6 @@
 			"name"	: "uberFragmentShader",
 			"type" 	: "SHADER",
 			"url" 	: "media/materials/fragmentShader.glsl"
-		},
-
-		{
-			"constructor" : "Asset",
-			"name"	: "PBRFragmentShader",
-			"type" 	: "SHADER",
-			"url" 	: "media/materials/pbr_fs.glsl"
 		}
 	],
 
