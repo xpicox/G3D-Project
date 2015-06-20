@@ -40,6 +40,13 @@
 			"name"	: "uberFragmentShader",
 			"type" 	: "SHADER",
 			"url" 	: "media/materials/fragmentShader.glsl"
+		},
+
+		{
+			"constructor" : "Asset",
+			"name"	: "PBRFragmentShader",
+			"type" 	: "SHADER",
+			"url" 	: "media/materials/pbr_fs.glsl"
 		}
 	],
 
@@ -50,14 +57,14 @@
 			"vertexShader"		: "uberVertexShader",
 			"fragmentShader" 	: "uberFragmentShader",
 			"defines"			: {
-									"DIFFUSE"	: 1
+									"DIFFUSE"	: 0
 								  },
 			"uniforms"			: {
-									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.8, "y" : 0.0, "z" : 0.0 } },
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 1.0, "y" : 0.0, "z" : 0.0 } },
 									"specular_color"	:	{ "type": "v3", "value": { "x" : 1.0, "y" : 1.0, "z" : 1.0 } },
-									"roughness"			: 	{ "type": "f", "value": 0.0 },
+									"roughness"			: 	{ "type": "f", "value": 0.2 },
 									"metallic"			: 	{ "type": "f", "value": 0.0 },
-									"specular" 			: 	{ "type": "f", "value": 0.8 }
+									"specular" 			: 	{ "type": "f", "value": 0.5 }
 								  },
 			"lights"			: true
 		} 

@@ -95,16 +95,19 @@ vec3 Diffuse(vec3 lightColor, float roughness, float NdotL, float NdotV, float V
 // GGX - Trowbridge-Reitz
 float DGGX(float roughness, float NdotH)
 {
+
 	float alpha = roughness * roughness;
 	alpha = alpha * alpha;
 	float pow2 = NdotH * NdotH;
 	// (NdotH*(a2-1.0)+1.0) = NdotH * alpha - NdotH + 1.0 => espresso nella forma multiply then add
 	float d = pow2 * alpha - pow2 + 1.0;
 	return alpha / (PI * d * d);
+
 }
 
 float DBeckman(float roughness, float NdotH)
 {
+	
 	float alpha = roughness * roughness;
 	alpha = alpha * alpha;
 	float pow2 = NdotH * NdotH;
@@ -125,23 +128,31 @@ float DBeckman(float roughness, float NdotH)
 // Schlick Approximation of Beckmann equation
 float GSchlickBeckmann (float roughness, float NdotL, float NdotV)
 {
+
+	roughness += 1.0;
 	float alpha = roughness * roughness;
 	// Brian Karis aproximated k as follows
-	float k = alpha * 0.5;
+	// Real Shading in Unreal Engine 4 by Brian Karis
+	// https://de45xmedrsdbp.cloudfront.net/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf
+	float k = alpha / 8.0;
 
 	float schlickL = NdotL * (1.0 - k) + k;
 	float schlickV = NdotV * (1.0 - k) + k;
 
 	return 1.0 / (schlickV * schlickL);
+
 }
 
 // Fresnell term
 vec3 FSchlick(vec3 specularColor, float VdotH)
 {
+
 	float inv = 1.0 - VdotH;
 	float pow5 = inv * inv;
 	pow5 = pow5 * pow5 * inv;
+
 	return specularColor + (1.0 - specularColor) * pow5;
+
 }
 
 void main() {
@@ -149,7 +160,10 @@ void main() {
 	vec3 totalDiffuseLight = vec3(0.0);
 	vec3 totalSpecularLight = vec3(0.0);
 	vec3 color = vec3(1.0);
-
+	
+	// Roughness remapping
+	// according to Physically Based Shading at Disney by Brent Burley
+	// http://blog.selfshadow.com/publications/s2012-shading-course/burley/s2012_pbs_disney_brdf_notes_v3.pdf
 	float roughness = (roughness + 1.0)/2.0;
 
 	vec3 v = normalize(-viewPosition);
@@ -181,7 +195,7 @@ void main() {
 
 			// Microfacets model
 
-			vec3 BRDF = DBeckman(roughness, NdotH) * GSchlickBeckmann(roughness, NdotL, NdotV) * FSchlick(specular_color, VdotH) * 0.25;
+			vec3 BRDF = DGGX(roughness, NdotH) * GSchlickBeckmann(roughness, NdotL, NdotV) * FSchlick(specular_color, VdotH) * 0.25;
 
 			totalSpecularLight +=  BRDF * spotLightColor[i] * fallOffEffect * max(NdotL, 0.0);
 
@@ -206,7 +220,7 @@ void main() {
 
 		// Microfacets model
 
-		vec3 BRDF = DBeckman(roughness, NdotH) * GSchlickBeckmann(roughness, NdotL, NdotV) * FSchlick(specular_color, VdotH) * 0.25;
+		vec3 BRDF = DGGX(roughness, NdotH) * GSchlickBeckmann(roughness, NdotL, NdotV) * FSchlick(specular_color, VdotH) * 0.25;
 
 		totalSpecularLight += BRDF * directionalLightColor[i] * max(NdotL, 0.0);
 
@@ -216,8 +230,8 @@ void main() {
 	// metallic = nodiffuse + specular is base color
 	//color = mix(diffuse_color/PI * totalDiffuseLight, diffuse_color/PI * totalDiffuseLight +totalSpecularLight, metallic);
 
-	color = diffuse_color * totalDiffuseLight + specular * totalSpecularLight;
+	color = mix(diffuse_color * totalDiffuseLight, totalSpecularLight, specular);
 
-	gl_FragColor = vec4(pow(color, vec3(0.45)), 1.0);
+	gl_FragColor = vec4(pow(color, vec3(1.0)), 1.0);
 
 }

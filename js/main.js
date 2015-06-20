@@ -44,5 +44,8 @@ function render() {
 	requestAnimationFrame( render );
 	PROJECT.cameraControls.update();
 	stats.update();
+
+	PROJECT.car.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), 0.01);
+
 	PROJECT.renderer.render(PROJECT.scene, PROJECT.camera);
 }

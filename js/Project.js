@@ -246,19 +246,32 @@ PROJECT.addLights = function ()
 		lampioni.name = "Lampioni";
 		var lampione = lampioni.getObjectByName("Lampione");
 		lampione.updateMatrixWorld();
-		var spotLight = new THREE.SpotLight(0xFFFFFF);
-		spotLight.position.setFromMatrixPosition( lampione.matrixWorld );
-		spotLight.intensity = 1.0;
-		spotLight.exponent = 10.0;
-		this.lights.push(spotLight);
-		var sphere = new THREE.Mesh(new THREE.SphereGeometry(50, 16, 16), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
-		sphere.position.clone(spotLight.position);
-		sphere.position.setFromMatrixPosition( lampione.matrixWorld );
-		this.scene.add(sphere);
-		this.scene.add(spotLight);
-		// var dirLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-		// dirLight.position.set(500,500,500);
-		// this.scene.add(dirLight);
+		// var spotLight = new THREE.SpotLight(0xFFFFFF);
+		// spotLight.position.setFromMatrixPosition( lampione.matrixWorld );
+		// spotLight.intensity = 1.0;
+		// spotLight.exponent = 10.0;
+		// this.lights.push(spotLight);
+		// var sphere = new THREE.Mesh(new THREE.SphereGeometry(50, 16, 16), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
+		// sphere.position.clone(spotLight.position);
+		// sphere.position.setFromMatrixPosition( lampione.matrixWorld );
+		// this.scene.add(sphere);
+		// this.scene.add(spotLight);
+
+		// lampione = lampioni.getObjectByName("Lampione001");
+		// spotLight = new THREE.SpotLight(0xFFFFFF);
+		// spotLight.position.setFromMatrixPosition( lampione.matrixWorld );
+		// spotLight.intensity = 1.0;
+		// spotLight.exponent = 10.0;
+		// this.lights.push(spotLight);
+		// sphere = new THREE.Mesh(new THREE.SphereGeometry(50, 16, 16), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
+		// sphere.position.clone(spotLight.position);
+		// sphere.position.setFromMatrixPosition( lampione.matrixWorld );
+		// this.scene.add(sphere);
+		// this.scene.add(spotLight);
+
+		var dirLight = new THREE.DirectionalLight(0xFFFFFF, 1.4);
+		dirLight.position.setFromMatrixPosition( lampione.matrixWorld );
+		this.scene.add(dirLight);
 
 	} else 
 		console.warn("Garage not laoded!");
@@ -272,7 +285,10 @@ PROJECT.addCar = function ()
 		mainBody.material = this.shaderManager["lamborghiniMainBody"];
 		// CHECK IF SCENE IS DEFINED
 		if (this.scene !== undefined)
+		{
 			this.scene.add(car);
+			PROJECT.car = car;
+		}
 		else
 			console.warn("Can't add car to undefined Scene");
 	}
