@@ -246,16 +246,16 @@ PROJECT.addLights = function ()
 		lampioni.name = "Lampioni";
 		var lampione = lampioni.getObjectByName("Lampione");
 		lampione.updateMatrixWorld();
-		// var spotLight = new THREE.SpotLight(0xFFFFFF);
-		// spotLight.position.setFromMatrixPosition( lampione.matrixWorld );
-		// spotLight.intensity = 1.0;
-		// spotLight.exponent = 10.0;
-		// this.lights.push(spotLight);
-		// var sphere = new THREE.Mesh(new THREE.SphereGeometry(50, 16, 16), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
-		// sphere.position.clone(spotLight.position);
-		// sphere.position.setFromMatrixPosition( lampione.matrixWorld );
-		// this.scene.add(sphere);
-		// this.scene.add(spotLight);
+		var spotLight = new THREE.SpotLight(0xFFFFFF);
+		spotLight.position.setFromMatrixPosition( lampione.matrixWorld );
+		spotLight.intensity = 1.0;
+		spotLight.exponent = 10.0;
+		this.lights.push(spotLight);
+		var sphere = new THREE.Mesh(new THREE.SphereGeometry(50, 16, 16), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
+		sphere.position.clone(spotLight.position);
+		sphere.position.setFromMatrixPosition( lampione.matrixWorld );
+		this.scene.add(sphere);
+		this.scene.add(spotLight);
 
 		// lampione = lampioni.getObjectByName("Lampione001");
 		// spotLight = new THREE.SpotLight(0xFFFFFF);
@@ -269,9 +269,9 @@ PROJECT.addLights = function ()
 		// this.scene.add(sphere);
 		// this.scene.add(spotLight);
 
-		var dirLight = new THREE.DirectionalLight(0xFFFFFF, 1.4);
-		dirLight.position.setFromMatrixPosition( lampione.matrixWorld );
-		this.scene.add(dirLight);
+		// var dirLight = new THREE.DirectionalLight(0xFFFFFF, 2.0);
+		// dirLight.position.setFromMatrixPosition( lampione.matrixWorld );
+		// this.scene.add(dirLight);
 
 	} else 
 		console.warn("Garage not laoded!");
@@ -290,11 +290,27 @@ PROJECT.addCar = function ()
 			PROJECT.car = car;
 		}
 		else
-			console.warn("Can't add car to undefined Scene");
+			console.warn("Can't add car: undefined Scene");
 	}
 }
 
+// Add the garage to the scene
+PROJECT.addGarage = function ()
+{
 
+	var garage = this.assetsManager.assets["garage"];
+	if (garage == undefined) {
+		console.warn("Garage undefined!");
+		return;
+	}
+	if (this.scene === undefined) {
+		console.warn("Can't add garage: undefined Scene");
+		return;
+	}
+	this.scene.add(garage);
+	PROJECT.garage = garage;
+
+}
 
 
 

@@ -34,8 +34,6 @@ uniform float specular;
 	uniform float spotLightDecay[ MAX_SPOT_LIGHTS ];
 #endif
 
-// alpha = (Roughness remapping)^2
-
 vec3 DiffuseLambert(vec3 diffuseColor)
 {
 	return diffuseColor / PI;
@@ -174,12 +172,18 @@ void main() {
 	{
 		vec3 lightPosition = (viewMatrix * vec4(spotLightPosition[i], 1.0)).xyz;
 		vec3 l = lightPosition - viewPosition; // LIGHT VECTOR
+		
+		// light attenuation computed as in three.js shaders
+		float attenuation = 1.0;
+		if (spotLightDecay[i] > 0.0)
+			attenuation = pow ( clamp(1.0 - length(l) / spotLightDistance[i], 0.0, 1.0) , spotLightDecay[i]);
+
 
 		l = normalize(l);
 
 		// angle between light direction and light vector
 		float beta = dot(spotLightDirection[i], normalize(spotLightPosition[i] - worldPosition));
-		color = vec3(0.0,1.0,0.0);
+
 		// make the light computation only if the fragment is in the spotlight cone
 		if (beta > spotLightAngleCos[i]) {
 
@@ -191,13 +195,13 @@ void main() {
 			float NdotV = dot(n, v);
 			float NdotH = dot(n, h);
 
-			totalDiffuseLight += Diffuse(spotLightColor[i], roughness, NdotL, NdotV, VdotH) * fallOffEffect * max(NdotL, 0.0);
+			totalDiffuseLight += Diffuse(spotLightColor[i], roughness, NdotL, NdotV, VdotH) * fallOffEffect * max(NdotL, 0.0) * attenuation;
 
 			// Microfacets model
 
 			vec3 BRDF = DGGX(roughness, NdotH) * GSchlickBeckmann(roughness, NdotL, NdotV) * FSchlick(specular_color, VdotH) * 0.25;
 
-			totalSpecularLight +=  BRDF * spotLightColor[i] * fallOffEffect * max(NdotL, 0.0);
+			totalSpecularLight +=  BRDF * spotLightColor[i] * fallOffEffect * max(NdotL, 0.0) * attenuation;
 
 		}
 	}
@@ -230,8 +234,8 @@ void main() {
 	// metallic = nodiffuse + specular is base color
 	//color = mix(diffuse_color/PI * totalDiffuseLight, diffuse_color/PI * totalDiffuseLight +totalSpecularLight, metallic);
 
-	color = mix(diffuse_color * totalDiffuseLight, totalSpecularLight, specular);
-
+	// color = mix(diffuse_color * totalDiffuseLight, totalSpecularLight, specular);
+	color = diffuse_color * totalDiffuseLight + totalSpecularLight;
 	gl_FragColor = vec4(pow(color, vec3(1.0)), 1.0);
 
 }

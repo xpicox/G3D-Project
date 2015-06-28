@@ -21,6 +21,7 @@ function init()
 	// PROJECT.scene.add(new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50), new THREE.MeshPhongMaterial({color: 0x00ff00})));
 	PROJECT.addLights();
 	PROJECT.addCar();
+	PROJECT.addGarage();
 	initStats();
 	render();
 
@@ -45,7 +46,7 @@ function render() {
 	PROJECT.cameraControls.update();
 	stats.update();
 
-	PROJECT.car.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), 0.01);
+	// PROJECT.car.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), 0.01);
 
 	PROJECT.renderer.render(PROJECT.scene, PROJECT.camera);
 }

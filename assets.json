@@ -11,7 +11,7 @@
 			"constructor" : "Asset",
 			"name" 	: "lamborghini",
 			"type" 	: "MODEL",
-			"url" 	: "media/lamborghini/lamborghini.json"
+			"url" 	: "media/lamborghini/lamborghini.min.json"
 		},
 
 		{
@@ -50,7 +50,7 @@
 			"vertexShader"		: "uberVertexShader",
 			"fragmentShader" 	: "uberFragmentShader",
 			"defines"			: {
-									"DIFFUSE"	: 0
+									"DIFFUSE"	: 1
 								  },
 			"uniforms"			: {
 									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 1.0, "y" : 0.0, "z" : 0.0 } },
