@@ -107,7 +107,7 @@ PROJECT.AssetManager = function () {
 	this.materials = {};
 	this.callback = function (asset, callback, object) {
 		this.assets[asset.name] = object;
-		this.loadedAssets++;
+		$( "#progressbar" ).progressbar( "value", ++this.loadedAssets );
 		if(this.loadedAssets == this.assetsCount) {
 			callback();
 		}
@@ -130,9 +130,11 @@ PROJECT.AssetManager.prototype = {
 
 	addAssets: function (assets) {
 		if (assets instanceof Array)
-			for (var asset of assets) {
+		{
+			$( "#progressbar" ).progressbar( "option", "max", assets.length );
+			for (var asset of assets)
 				this.addAsset(new PROJECT.Asset(asset));
-			}
+		}
 		else
 			console.warn("Invalid argument");
 	},

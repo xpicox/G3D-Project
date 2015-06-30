@@ -2,6 +2,6 @@
 *.TGA
 *.tga
 pbr_fs.glsl
-lamborginiminified.json
+*minified.json
 lambo.min.json
 lamb.json
