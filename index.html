@@ -28,11 +28,17 @@
 	<script src="lib/TGALoader.js"></script>
 	<script src="lib/AssimpJSONLoader.js"></script>
 	<script src="lib/OrbitControls.js"></script>
+	<script src="lib/SpotLightHelper.js"></script>
+	<script src="lib/EffectComposer.js"></script>
+	<script src="lib/CopyShader.js"></script>
+	<script src="lib/ShaderPass.js"></script>
+	<script src="lib/RenderPass.js"></script>
+	<script src="lib/MaskPass.js"></script>
 	<script src="lib/dat.gui.min.js"></script>
 	<script src="lib/stats.min.js"></script>
-	<script src="js/Project.js"></script>
-	<link rel="stylesheet" type="text/css" href="lib/jquery-ui-1.11.4/jquery-ui.min.css">
 	<script src="lib/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="lib/jquery-ui-1.11.4/jquery-ui.min.css">
+	<script src="js/Project.js"></script>
 	<script>
 		$(function() {
     		$( "#progressbar" ).progressbar({
@@ -41,6 +47,8 @@
       				$( "#progressbar" ).progressbar("destroy");
       			}
     		});
+
+    		$.getJSON("assets.json").done(loadAll);
   		});
 	</script>
 </head>

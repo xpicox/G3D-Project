@@ -19,6 +19,9 @@ uniform float metallic;
 uniform float specular;
 // MAX_SPOT_LIGHTS defined by three.js
 // uniforms passed by three.js to the shader
+
+const float penumbraAngle = 0.866;  // Penumbra angle
+
 #if MAX_DIR_LIGHTS > 0
 	uniform vec3 directionalLightColor[ MAX_DIR_LIGHTS ];
 	uniform vec3 directionalLightDirection[ MAX_DIR_LIGHTS ];
@@ -93,8 +96,7 @@ vec3 Diffuse(vec3 lightColor, float roughness, float NdotL, float NdotV, float V
 // GGX - Trowbridge-Reitz
 float DGGX(float roughness, float NdotH)
 {
-
-	float alpha = roughness * roughness;
+	float alpha = roughness;// * roughness;
 	alpha = alpha * alpha;
 	float pow2 = NdotH * NdotH;
 	// (NdotH*(a2-1.0)+1.0) = NdotH * alpha - NdotH + 1.0 => espresso nella forma multiply then add
@@ -141,6 +143,11 @@ float GSchlickBeckmann (float roughness, float NdotL, float NdotV)
 
 }
 
+float GCookTorrance(float roughness, float NdotL, float NdotV, float NdotH, float VdotH)
+{
+	return min(1.0, min(2.0 * NdotL * NdotH / VdotH, 2.0 * NdotV * NdotH / VdotH));
+}
+
 // Fresnell term
 vec3 FSchlick(vec3 specularColor, float VdotH)
 {
@@ -162,7 +169,7 @@ void main() {
 	// Roughness remapping
 	// according to Physically Based Shading at Disney by Brent Burley
 	// http://blog.selfshadow.com/publications/s2012-shading-course/burley/s2012_pbs_disney_brdf_notes_v3.pdf
-	float roughness = (roughness + 1.0)/2.0;
+	//float roughness = (roughness + 1.0)/2.0;
 
 	vec3 v = normalize(-viewPosition);
 	vec3 n = normalize(n_);
@@ -189,18 +196,20 @@ void main() {
 
 			float fallOffEffect = max( pow(max(beta, 0.0), spotLightExponent[i]), 0.0);
 
-			vec3 h = normalize(l+v);
-			float VdotH = dot(v,h); // = LdotH
-			float NdotL = dot(n, l);
-			float NdotV = dot(n, v);
-			float NdotH = dot(n, h);
+			// float fallOffEffect = (beta - spotLightAngleCos[i])/(penumbraAngle - spotLightAngleCos[i]);
+			// fallOffEffect = pow(clamp(fallOffEffect, 0.0, 1.0), spotLightExponent[i]);
 
-			totalDiffuseLight += Diffuse(spotLightColor[i], roughness, NdotL, NdotV, VdotH) * fallOffEffect * max(NdotL, 0.0) * attenuation;
+			vec3 h = normalize(l+v);
+			float VdotH = clamp(dot(v,h), 0.0001, 1.0); // = LdotH
+			float NdotL = clamp(dot(n, l), 0.0, 1.0);
+			float NdotV = clamp(dot(n, v), 0.0, 1.0);
+			float NdotH = clamp(dot(n, h), 0.0, 1.0);
 
 			// Microfacets model
 
 			vec3 BRDF = DGGX(roughness, NdotH) * GSchlickBeckmann(roughness, NdotL, NdotV) * FSchlick(specular_color, VdotH) * 0.25;
 
+			totalDiffuseLight += Diffuse(spotLightColor[i], roughness, NdotL, NdotV, VdotH) * fallOffEffect * max(NdotL, 0.0) * attenuation * (1.0 - BRDF);
 			totalSpecularLight +=  BRDF * spotLightColor[i] * fallOffEffect * max(NdotL, 0.0) * attenuation;
 
 		}
@@ -236,6 +245,6 @@ void main() {
 
 	// color = mix(diffuse_color * totalDiffuseLight, totalSpecularLight, specular);
 	color = diffuse_color * totalDiffuseLight + totalSpecularLight;
-	gl_FragColor = vec4(pow(color, vec3(1.0)), 1.0);
+	gl_FragColor = vec4(pow(color, vec3(0.45)), 1.0);
 
 }

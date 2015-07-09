@@ -40,7 +40,36 @@
 			"name"	: "uberFragmentShader",
 			"type" 	: "SHADER",
 			"url" 	: "media/materials/fragmentShader.glsl"
+		},
+
+		{
+			"constructor" : "Asset",
+			"name"	: "SSGRVertexShader",
+			"type" 	: "SHADER",
+			"url" 	: "media/materials/vertexSSGR.glsl"
+		},
+
+		{
+			"constructor" : "Asset",
+			"name"	: "SSGRFragmentShader",
+			"type" 	: "SHADER",
+			"url" 	: "media/materials/fragmentSSGR.glsl"
+		},
+
+		{
+			"constructor" : "Asset",
+			"name"	: "spotLightVertexShader",
+			"type" 	: "SHADER",
+			"url" 	: "media/materials/spotLightVertexShader.glsl"
+		},
+
+		{
+			"constructor" : "Asset",
+			"name"	: "spotLightFragmentShader",
+			"type" 	: "SHADER",
+			"url" 	: "media/materials/spotLightFragmentShader.glsl"
 		}
+
 	],
 
 	"materials" : [
@@ -50,16 +79,51 @@
 			"vertexShader"		: "uberVertexShader",
 			"fragmentShader" 	: "uberFragmentShader",
 			"defines"			: {
-									"DIFFUSE"	: 1
+									"DIFFUSE"	: 0
 								  },
 			"uniforms"			: {
-									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 1.0, "y" : 0.0, "z" : 0.0 } },
-									"specular_color"	:	{ "type": "v3", "value": { "x" : 1.0, "y" : 1.0, "z" : 1.0 } },
-									"roughness"			: 	{ "type": "f", "value": 0.2 },
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.25, "y" : 0.0, "z" : 0.0 } },
+									"specular_color"	:	{ "type": "v3", "value": { "x" : 1.0, "y" : 0.0, "z" : 0.0 } },
+									"roughness"			: 	{ "type": "f", "value": 0.25 },
 									"metallic"			: 	{ "type": "f", "value": 0.0 },
 									"specular" 			: 	{ "type": "f", "value": 0.5 }
 								  },
 			"lights"			: true
-		} 
+		},
+		{
+			"name" 				: "SSGodRays",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "SSGRVertexShader",
+			"fragmentShader" 	: "SSGRFragmentShader",
+			"defines"			: {
+									
+								  },
+			"uniforms"			: {
+									"exposure"			: 	{ "type": "f", "value": 0.5 },
+									"decay"				: 	{ "type": "f", "value": 0.9 },
+									"density" 			: 	{ "type": "f", "value": 0.2 },
+									"weight" 			: 	{ "type": "f", "value": 0.2 },
+									"lightPosOnScreen" 	: 	{ "type": "v2", "value" : { "x" : 0.0, "y": 0.0 } },
+									"tDiffuse"      	: 	{ "type": "t", "value": null },
+									"lightpos"			: 	{ "type" : "v3", "value" : { "x" : 0.0, "y" : 0.0, "z" : 0.0 } }
+								  },
+			"lights"			: true
+		},
+
+		{
+			"name" 				: "LightCone",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "spotLightVertexShader",
+			"fragmentShader" 	: "spotLightFragmentShader",
+			"defines"			: {
+									"lightIndex" 	: 0
+								  },
+			"uniforms"			: {
+									"targetPos"		: 	{ "type" : "v3", "value" : { "x" : 0.0, "y" : 0.0, "z" : 0.0 } }
+								  },
+			"lights"			: true,
+			"transparent"		: true
+		}
+
 	]
 }
