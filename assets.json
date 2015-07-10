@@ -16,6 +16,13 @@
 
 		{
 			"constructor" : "Asset",
+			"name" 	: "lamborghini2",
+			"type" 	: "MODEL",
+			"url" 	: "media/lamborghini/lamborghiniminifiedUV.json"
+		},
+
+		{
+			"constructor" : "Asset",
 			"name" 	: "garageDiffuseMap",
 			"type" 	: "JPGTEXTURE",
 			"url" 	: "media/garage/T_Concrete_Poured_D.jpg"

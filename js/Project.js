@@ -333,7 +333,7 @@ PROJECT.addLights = function ()
 
 PROJECT.addCar = function ()
 {
-	var car = this.assetsManager.assets["lamborghini"];
+	var car = this.assetsManager.assets["lamborghini2"];
 	if (car !== undefined) {
 		var mainBody = car.getObjectByName("MainBody").children[0];
 		mainBody.material = this.shaderManager["lamborghiniMainBody"];
@@ -345,6 +345,7 @@ PROJECT.addCar = function ()
 		}
 		else
 			console.warn("Can't add car: undefined Scene");
+		console.log(car);
 	}
 }
 
@@ -374,7 +375,7 @@ PROJECT.addCarLights = function ()
 
 	function addCone(light)
 	{
-		var geometry = new THREE.CylinderGeometry( 0, 1, 1, 32, 1, true );
+		var geometry = new THREE.CylinderGeometry( 0.001, 1, 1, 16, 1, false );
 		geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, - 0.5, 0 ) );
 		geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );	
 		var material = PROJECT.shaderManager["LightCone"].clone();
