@@ -333,7 +333,7 @@ PROJECT.addLights = function ()
 
 PROJECT.addCar = function ()
 {
-	var car = this.assetsManager.assets["lamborghini2"];
+	var car = this.assetsManager.assets["lamborghini"];
 	if (car !== undefined) {
 		var mainBody = car.getObjectByName("MainBody").children[0];
 		mainBody.material = this.shaderManager["lamborghiniMainBody"];

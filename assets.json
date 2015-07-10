@@ -11,13 +11,6 @@
 			"constructor" : "Asset",
 			"name" 	: "lamborghini",
 			"type" 	: "MODEL",
-			"url" 	: "media/lamborghini/lamborghini.min.json"
-		},
-
-		{
-			"constructor" : "Asset",
-			"name" 	: "lamborghini2",
-			"type" 	: "MODEL",
 			"url" 	: "media/lamborghini/lamborghiniminifiedUV.json"
 		},
 
