@@ -386,6 +386,7 @@ PROJECT.addCarLights = function ()
 		console.log(material.defines.lightIndex);
 		material.side = THREE.DoubleSide;
 		var cone = new THREE.Mesh(geometry, material);
+		cone.name = "Cone";
 		light.add(cone);
 		light.updateMatrixWorld();
 		PROJECT.lights.push(light);
@@ -428,18 +429,20 @@ PROJECT.addCarLights = function ()
 		spotLight.add(spotLight.target); // Needed to auto-update target position according to light position. See documentation of spotlight
 
 		addCone(spotLight);
+		return spotLight;
 
 	}
 
 	var car = this.car;
+	car.lights = [];
 
 	// Spotlight orientation : target positioning
 	var azimuth = -Math.PI/2 + Math.PI/24; // Angle
 	var polar = 7/12*Math.PI;   // Angle
 	var r = 50.0;
-	addLamp(car.getObjectByName("FLLight"), targetPosition(azimuth, polar, r));
+	car.lights.push(addLamp(car.getObjectByName("FLLight"), targetPosition(azimuth, polar, r)));
 	azimuth -= 2 * Math.PI/24;
-	addLamp(car.getObjectByName("FRLight"), targetPosition(azimuth, polar, r))
+	car.lights.push(addLamp(car.getObjectByName("FRLight"), targetPosition(azimuth, polar, r)));
 
 
 
@@ -522,6 +525,67 @@ PROJECT.addCubeMap = function ()
 	);
 				
 	PROJECT.scene.add( skyBox );
+}
+
+
+PROJECT.addEventListeners = function ()
+{
+	function onWindowResize() {
+
+		PROJECT.camera.aspect = window.innerWidth / window.innerHeight;
+		PROJECT.camera.updateProjectionMatrix();
+		PROJECT.renderer.setSize( window.innerWidth, window.innerHeight );
+		PROJECT.composer.setSize( window.innerWidth, window.innerHeight )
+	}
+
+	window.addEventListener( 'resize', onWindowResize, false );
+
+	function onKeyDown ( event ) {
+		switch( event.keyCode ) {
+			case 76: /*L*/
+				if (PROJECT.car.lights)
+					PROJECT.car.lights.forEach(function(element){
+						if(element.visible)
+							element.visible = false;
+						else
+							element.visible = true;
+					});
+				console.log(PROJECT.car.lights);
+				break;
+			// case 38: /*up*/	controlsGallardo.moveForward = true; break;
+			// case 87: /*W*/ 	controlsVeyron.moveForward = true; break;
+			// case 40: /*down*/controlsGallardo.moveBackward = true; break;
+			// case 83: /*S*/ 	 controlsVeyron.moveBackward = true; break;
+			// case 37: /*left*/controlsGallardo.moveLeft = true; break;
+			// case 65: /*A*/   controlsVeyron.moveLeft = true; break;
+			// case 39: /*right*/controlsGallardo.moveRight = true; break;
+			// case 68: /*D*/    controlsVeyron.moveRight = true; break;
+			// case 49: /*1*/	setCurrentCar( "gallardo", "center" ); break;
+			// case 50: /*2*/	setCurrentCar( "veyron", "center" ); break;
+			// case 51: /*3*/	setCurrentCar( "gallardo", "front" ); break;
+			// case 52: /*4*/	setCurrentCar( "veyron", "front" ); break;
+			// case 53: /*5*/	setCurrentCar( "gallardo", "back" ); break;
+			// case 54: /*6*/	setCurrentCar( "veyron", "back" ); break;
+			// case 78: /*N*/   vdir *= -1; break;
+			// case 66: /*B*/   blur = !blur; break;
+		}
+	};
+	function onKeyUp ( event ) {
+	// 	switch( event.keyCode ) {
+	// 		case 38: /*up*/controlsGallardo.moveForward = false; break;
+	// 		case 87: /*W*/ controlsVeyron.moveForward = false; break;
+	// 		case 40: /*down*/controlsGallardo.moveBackward = false; break;
+	// 		case 83: /*S*/ 	 controlsVeyron.moveBackward = false; break;
+	// 		case 37: /*left*/controlsGallardo.moveLeft = false; break;
+	// 		case 65: /*A*/ 	 controlsVeyron.moveLeft = false; break;
+	// 		case 39: /*right*/controlsGallardo.moveRight = false; break;
+	// 		case 68: /*D*/ 	  controlsVeyron.moveRight = false; break;
+	// 	}
+	};
+
+
+	document.addEventListener( 'keydown', onKeyDown, false );
+	document.addEventListener( 'keyup', onKeyUp, false );
 }
 /////// END PROJECT ACCESSOR METHODS
 
