@@ -1,9 +1,6 @@
 #extension GL_EXT_frag_depth : enable
 
 varying vec3 worldPosition; // vertex position in world space
-varying vec3 viewPosition; // vertex position in view space
-varying vec3 n_; // normal in view space
-uniform vec3 targetPos;
 
 #if MAX_SPOT_LIGHTS > 0
 	uniform vec3 spotLightColor[ MAX_SPOT_LIGHTS ];

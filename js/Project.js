@@ -212,7 +212,7 @@ PROJECT.initRenderer = function()
 	var gl = renderer.getContext();
 	var ext = gl.getExtension('EXT_frag_depth');
 	if (!ext)
-		console.error("EXT_frag_depth : unaviable")
+		console.warn("EXT_frag_depth : unavailable")
 	this.renderer = renderer;
 	document.body.appendChild( renderer.domElement );
 }
@@ -334,19 +334,47 @@ PROJECT.addLights = function ()
 PROJECT.addCar = function ()
 {
 	var car = this.assetsManager.assets["lamborghini"];
-	if (car !== undefined) {
-		var mainBody = car.getObjectByName("MainBody").children[0];
-		mainBody.material = this.shaderManager["lamborghiniMainBody"];
-		// CHECK IF SCENE IS DEFINED
-		if (this.scene !== undefined)
-		{
-			this.scene.add(car);
-			PROJECT.car = car;
-		}
-		else
-			console.warn("Can't add car: undefined Scene");
-		console.log(car);
+	if (!car)
+		return;	
+	
+	function getEnvironment() {
+
+		var cubeMap = new THREE.CubeTexture( [] , THREE.CubeReflectionMapping);
+		cubeMap.format = THREE.RGBFormat;
+		cubeMap.flipY = false;
+		var getSide = function ( x, y) {
+			var size = 2048;
+			var canvas = document.createElement( 'canvas' );
+			canvas.width = size;
+			canvas.height = size;
+			var context = canvas.getContext( '2d' );
+			context.drawImage( PROJECT.assetsManager.assets["garageCubeMap"].image, - x * size, - y * size );
+			return canvas;
+		};
+
+		cubeMap.images[ 0 ] = getSide( 1, 0 ); // positivex
+		cubeMap.images[ 1 ] = getSide( 3, 0 ); // negativex
+		cubeMap.images[ 2 ] = getSide( 4, 0 ); // positivey
+		cubeMap.images[ 3 ] = getSide( 5, 0 ); // negativey
+		cubeMap.images[ 4 ] = getSide( 0, 0 ); // positivez
+		cubeMap.images[ 5 ] = getSide( 2, 0 );  // negativez
+		cubeMap.needsUpdate = true;
+	
+		return cubeMap;
+
 	}
+
+	var mainBody = car.getObjectByName("MainBody").children[0]; // Mesh Main Body
+	mainBody.material = this.shaderManager["lamborghiniMainBody"];
+	mainBody.material.uniforms.environment.value = getEnvironment();
+	
+
+	if (!this.scene)
+		return;
+
+	this.scene.add(car);
+	PROJECT.car = car;
+
 }
 
 // Add the garage to the scene
@@ -486,7 +514,7 @@ PROJECT.addCubeMap = function ()
 {
 	////////// GARAGE CUBEMAP
 
-	var cubeMap = new THREE.CubeTexture( [] );
+	var cubeMap = new THREE.CubeTexture( [] , THREE.CubeReflectionMapping);
 	cubeMap.format = THREE.RGBFormat;
 	cubeMap.flipY = false;
 	var getSide = function ( x, y) {

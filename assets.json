@@ -39,7 +39,7 @@
 			"constructor" : "Asset",
 			"name"	: "uberFragmentShader",
 			"type" 	: "SHADER",
-			"url" 	: "media/materials/fragmentShader.glsl"
+			"url" 	: "media/materials/fragShader.glsl"
 		},
 
 		{
@@ -79,14 +79,17 @@
 			"vertexShader"		: "uberVertexShader",
 			"fragmentShader" 	: "uberFragmentShader",
 			"defines"			: {
-									"DIFFUSE"	: 0
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 1
 								  },
 			"uniforms"			: {
-									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.25, "y" : 0.0, "z" : 0.0 } },
-									"specular_color"	:	{ "type": "v3", "value": { "x" : 1.0, "y" : 0.0, "z" : 0.0 } },
-									"roughness"			: 	{ "type": "f", "value": 0.25 },
-									"metallic"			: 	{ "type": "f", "value": 0.0 },
-									"specular" 			: 	{ "type": "f", "value": 0.5 }
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 1.0, "y" : 0.76, "z" : 0.33 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.3 },
+									"metallic"			: 	{ "type" : "f", "value" : 1.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.8 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 0.1 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
 								  },
 			"lights"			: true
 		},
