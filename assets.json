@@ -23,6 +23,13 @@
 
 		{
 			"constructor" : "Asset",
+			"name" 	: "garageNormalMap",
+			"type" 	: "JPGTEXTURE",
+			"url" 	: "media/garage/T_Concrete_Poured_N.jpg"
+		},
+
+		{
+			"constructor" : "Asset",
 			"name"	: "garageCubeMap",
 			"type" 	: "JPGTEXTURE",
 			"url" 	: "media/garage/GarageCUBE.jpg"
@@ -39,7 +46,7 @@
 			"constructor" : "Asset",
 			"name"	: "uberFragmentShader",
 			"type" 	: "SHADER",
-			"url" 	: "media/materials/fragShader.glsl"
+			"url" 	: "media/materials/fragmentShader.glsl"
 		},
 
 		{
@@ -80,16 +87,44 @@
 			"fragmentShader" 	: "uberFragmentShader",
 			"defines"			: {
 									"DIFFUSE"	: 0,
-									"ENVMAP" 	: 1
+									"ENVMAP" 	: 1,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
 								  },
 			"uniforms"			: {
 									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 1.0, "y" : 0.76, "z" : 0.33 } },
-									"roughness"			: 	{ "type" : "f", "value" : 0.3 },
+									"roughness"			: 	{ "type" : "f", "value" : 0.5 },
 									"metallic"			: 	{ "type" : "f", "value" : 1.0 },
 									"specular" 			: 	{ "type" : "f", "value" : 0.8 },
 									"environment"		: 	{ "type" : "t", "value" : null },
 									"reflectivity" 		:   { "type" : "f", "value" : 0.1 },
 									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "GarageFloor",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 0,
+									"DIFFUSEMAP": 1,
+									"NORMALMAP" : 1
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.93, "y" : 0.80, "z" : 0.88 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.3 },
+									"metallic"			: 	{ "type" : "f", "value" : 0.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.6 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 0.1 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 },
+									"DiffuseMap"        :   { "type" : "t", "value" : null },
+									"repeat"			: 	{ "type" : "f", "value" : 30.0 },
+									"NormalMap" 		: 	{ "type" : "t", "value" : null }
+
 								  },
 			"lights"			: true
 		},

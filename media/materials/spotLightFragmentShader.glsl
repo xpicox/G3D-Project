@@ -26,6 +26,10 @@ void main ()
 	v = normalize(v);
 	// d = normalize(d);
 	float VdotD = dot(v, d);
+    
+//    float attenuation = 1.0;
+//    if (spotLightDecay[i] > 0.0)
+//        attenuation = pow ( clamp(1.0 - length(light_vector) / spotLightDistance[i], 0.0, 1.0) , spotLightDecay[i]);
 
 	if ( (VdotD > spotLightAngleCos[ lightIndex ]))
 	{

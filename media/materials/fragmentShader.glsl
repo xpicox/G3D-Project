@@ -2,6 +2,7 @@
 #define RECIPROCAL_PI 0.31831
 #define GAMMA 2.2
 
+#extension GL_OES_standard_derivatives : enable
 // #define DIFFUSE_MAP 	true/false
 // #define NORMAL_MAP	true/false
 // #define DIFFUSE :
@@ -12,8 +13,21 @@
 varying vec3 worldPosition; // vertex position in world space
 varying vec3 viewPosition; // vertex position in view space
 varying vec3 n_; // normal in view space
+varying vec2 uVu;
 
+uniform float repeat;
+
+#if DIFFUSEMAP
+uniform sampler2D DiffuseMap;
+#else
 uniform vec3 diffuse_color;
+#endif
+
+#if NORMALMAP
+uniform sampler2D NormalMap;
+#endif
+
+
 uniform float roughness;
 uniform float metallic;
 uniform float specular;
@@ -56,6 +70,21 @@ vec4 saturate(vec4 v)
 	return clamp(v, 0.0, 1.0);
 }
 
+#if NORMALMAP
+vec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm ) {
+
+	vec3 q0 = dFdx( eye_pos.xyz );
+	vec3 q1 = dFdy( eye_pos.xyz );
+	vec2 st0 = dFdx( uVu.st );
+	vec2 st1 = dFdy( uVu.st );
+	vec3 S = normalize(  q0 * st1.t - q1 * st0.t );
+	vec3 T = normalize( -q0 * st1.s + q1 * st0.s );
+	vec3 N =  surf_norm ;
+	vec3 mapN = texture2D( NormalMap, repeat * uVu ).xyz * 2.0 - 1.0;
+	mat3 tsn = mat3( S, T, N );
+	return normalize( tsn * mapN );
+}
+#endif
 
 // Lambert
 vec3 diffuse(vec3 albedo, float NdL, float NdV, float VdH, float roughness)
@@ -106,7 +135,19 @@ float shadowing(float alpha, float NdV, float NdL, float NdH, float VdH, float L
 
 void main()
 {
+
+#if DIFFUSEMAP
+	vec3 albedo = pow(texture2D(DiffuseMap, repeat * uVu), vec4(GAMMA)).xyz;
+#else
+	vec3 albedo = diffuse_color;
+#endif
+
+#if NORMALMAP
+	vec3 normal = perturbNormal2Arb(viewPosition, normalize(n_));
+#else
 	vec3 normal = normalize(n_);
+#endif
+
 	vec3 view_vector = normalize(-viewPosition);
 	float alpha = roughness_remap(roughness);
 	vec3 color = vec3(0.0);
@@ -117,9 +158,9 @@ void main()
 	// Distinction between metallic and dieletric materials
     // https://seblagarde.wordpress.com/2011/08/17/feeding-a-physical-based-lighting-mode/
     // Linearly interpolate to get the right albedo and specular
-    vec3 real_albedo = mix(diffuse_color, vec3(0.0), metallic);
+    vec3 real_albedo = mix(albedo, vec3(0.0), metallic);
     float dieletric_specular = mix(0.02, 0.05, specular);
-    vec3 real_specular = mix(vec3(dieletric_specular), diffuse_color, metallic);
+    vec3 real_specular = mix(vec3(dieletric_specular), albedo, metallic);
 
 #if MAX_SPOT_LIGHTS > 0
 	
@@ -154,17 +195,17 @@ void main()
 
 		}
 
-
 	}
 
 #endif
 
 #if ENVMAP
+
 	vec3 reflect_vector = reflect(-view_vector, normal);
     reflect_vector.x *= -1.0;
     float mipIndex =  alpha * 8.0;
     vec3 reflection = textureCube(environment, reflect_vector, mipIndex).rgb;
-    reflection = pow(reflection, vec3(GAMMA));
+    reflection = pow(reflection, vec3(GAMMA)) * 1.2;
 
     vec3 env_fresnel = real_specular + (max(real_specular, 1.0 - alpha) - real_specular) * pow((1.0 - NdV), 15.0);
 

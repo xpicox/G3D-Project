@@ -17,10 +17,10 @@ function loadAll(json)
 function init()
 {
 	//console.log(PROJECT.assetsManager.assets["lamborghini"].getObjectByName("MainBody"));
-	var pianoshader = PROJECT.shaderManager["lamborghiniMainBody"].clone();
-	pianoshader.uniforms.roughness.value = 1.0;
-	pianoshader.uniforms.diffuse_color.value = new THREE.Vector3(0.93, 0.83, 0.89);
-	pianoshader.uniforms.specular.value = 0.2;
+	// var pianoshader = PROJECT.shaderManager["lamborghiniMainBody"].clone();
+	// pianoshader.uniforms.roughness.value = 1.0;
+	// pianoshader.uniforms.diffuse_color.value = new THREE.Vector3(0.93, 0.83, 0.89);
+	// pianoshader.uniforms.specular.value = 0.2;
 
 	PROJECT.initRenderer();
 	PROJECT.initScene();
@@ -36,7 +36,7 @@ function init()
 	PROJECT.addGarage();
 	PROJECT.initComposer();
 
-	PROJECT.garage.getObjectByName("Pavimento").children[0].material = pianoshader;
+	// PROJECT.garage.getObjectByName("Pavimento").children[0].material = pianoshader;
 	// PROJECT.addCubeMap();
 	PROJECT.addEventListeners();
 	initGUI();

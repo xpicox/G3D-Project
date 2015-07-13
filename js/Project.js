@@ -174,27 +174,6 @@ PROJECT.AssetManager.prototype = {
 					break;
 			}
 		}
-		// chrome://flags/#enable-javascript-harmony
-		// for (ass of this.assets) {
-		// 	switch (ass.type) {
-		// 		case PROJECT.MODEL:
-		// 			this.assimpLoader.load(ass.url, this.callback.bind(this, ass, callback));
-		// 			break;
-		// 		case PROJECT.TGATEXTURE:
-		// 			this.TGALoader.load(ass.url, this.callback.bind(this, ass, callback));
-		// 			break;
-		// 		case PROJECT.JPGTEXTURE:
-		// 			THREE.ImageUtils.loadTexture(ass.url, THREE.UVMapping, this.callback.bind(this, ass, callback));
-		// 			break;
-		// 		case PROJECT.SHADER:
-		// 			$.ajax({url:ass.url, success: this.callback.bind(this, ass, callback)})
-		// 			break;
-		// 		case PROJECT.MATERIAL:
-		// 			break;
-		// 		default:
-		// 			break;
-		// 	}
-		// }
 	}
 }
 
@@ -284,16 +263,16 @@ PROJECT.addLights = function ()
 		lampione.updateMatrixWorld();
 		var spotLight = new THREE.SpotLight(0xFFFFFF);
 		spotLight.position.setFromMatrixPosition( lampione.matrixWorld );
-		spotLight.position.set(-200.0, 600.0, 0.0);
+		spotLight.position.set(0.0, 600.0, 0.0);
 		spotLight.intensity = 1.0;
-		spotLight.exponent = 2.0;
+		spotLight.exponent = 25.0;
 		spotLight.angle = Math.PI/4;
-		this.lights.push(spotLight);
 		var sphere = new THREE.Mesh(new THREE.SphereGeometry(50, 16, 16), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
 		//sphere.position = spotLight.position.clone();
 		sphere.position.setFromMatrixPosition( lampione.matrixWorld );
 		this.scene.add(sphere);
 		this.scene.add(spotLight);
+		this.lights.push(spotLight);
 
 		var spotLight2 = new THREE.SpotLight(0xFFFFFF);
 		spotLight2.position.set(0.0, 100.0, 600.0);
@@ -308,6 +287,7 @@ PROJECT.addLights = function ()
 		spotLight3.intensity = 1.0;
 		spotLight3.exponent = 2.0;
 		spotLight3.angle = Math.PI/4;
+		spotLight.updateMatrixWorld();
 		this.lights.push(spotLight3);
 		this.scene.add(spotLight3);
 
@@ -382,10 +362,23 @@ PROJECT.addGarage = function ()
 {
 
 	var garage = this.assetsManager.assets["garage"];
-	if (garage == undefined) {
-		console.warn("Garage undefined!");
+	if (!garage)
 		return;
-	}
+
+	var pavimento = garage.getObjectByName("Pavimento").children[0];
+	pavimento.material = this.shaderManager["GarageFloor"];
+	pavimento.material.uniforms.DiffuseMap.value = this.assetsManager.assets["garageDiffuseMap"];
+	this.assetsManager.assets["garageDiffuseMap"].wrapS = THREE.RepeatWrapping;
+	this.assetsManager.assets["garageDiffuseMap"].wrapT = THREE.RepeatWrapping;
+	this.assetsManager.assets["garageDiffuseMap"].generateMipmaps = true;
+	this.assetsManager.assets["garageDiffuseMap"].needsUpdate = true;
+	pavimento.material.uniforms.NormalMap.value = this.assetsManager.assets["garageNormalMap"];
+	this.assetsManager.assets["garageNormalMap"].wrapS = THREE.RepeatWrapping;
+	this.assetsManager.assets["garageNormalMap"].wrapT = THREE.RepeatWrapping;
+	this.assetsManager.assets["garageDiffuseMap"].needsUpdate = true;
+
+
+
 	if (this.scene === undefined) {
 		console.warn("Can't add garage: undefined Scene");
 		return;
@@ -405,7 +398,7 @@ PROJECT.addCarLights = function ()
 	{
 		var geometry = new THREE.CylinderGeometry( 0.001, 1, 1, 16, 1, false );
 		geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, - 0.5, 0 ) );
-		geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );	
+		geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );
 		var material = PROJECT.shaderManager["LightCone"].clone();
 		// material.blending = THREE.AdditiveBlending;
 		material.depthWrite = false;
@@ -428,8 +421,10 @@ PROJECT.addCarLights = function ()
 		var coneWidth = coneLength * Math.tan( light.angle );	
 		cone.scale.set( coneWidth, coneWidth, coneLength );	
 		vector.setFromMatrixPosition( light.matrixWorld );
-		vector2.setFromMatrixPosition( light.target.matrixWorld );	
-		cone.lookAt( vector2.sub( vector ) );
+		vector2.setFromMatrixPosition( light.target.matrixWorld );
+		var dir = vector2.sub( vector );
+		cone.lookAt( dir );
+		cone.translateOnAxis(new THREE.Vector3(0.0, 0.0, 1.0), 5);
 		// cone.material.color.copy( light.color ).multiplyScalar( light.intensity );
 	}
 
@@ -449,7 +444,7 @@ PROJECT.addCarLights = function ()
 		spotLight.position.set(-20, 0, 0);
 		spotLight.intensity = 1.0;
 		spotLight.exponent = 5.0;
-		// spotLight.distance = 3000;
+		spotLight.distance = 1500;
 		spotLight.angle = Math.PI/8;
 
 		lamp.add(spotLight);
@@ -471,42 +466,6 @@ PROJECT.addCarLights = function ()
 	car.lights.push(addLamp(car.getObjectByName("FLLight"), targetPosition(azimuth, polar, r)));
 	azimuth -= 2 * Math.PI/24;
 	car.lights.push(addLamp(car.getObjectByName("FRLight"), targetPosition(azimuth, polar, r)));
-
-
-
-
-	// frontLeftLight.position.set(0,100,0);
-	// frontLeftLight.updateMatrixWorld();
-	// var spotLight = new THREE.SpotLight(0xFFFFFF);
-	// spotLight.position.set(-20, 0, 0);
-	// spotLight.intensity = 1.0;
-	// spotLight.exponent = 5.0;
-	// // spotLight.distance = 3000;
-	// spotLight.angle = Math.PI/8;
-	
-	// var azimuth = -Math.PI/2 + Math.PI/24; // Angle
-	// var polar = 7/12*Math.PI;   // Angle
-	// var r = 50.0;
-	// var x = r * Math.sin(azimuth) * Math.sin(polar);
-	// var y = r * Math.cos(polar);
-	// var z = r * Math.cos(azimuth) * Math.sin(polar);
-
-	// // this.lights.push(spotLight);
-
-	// frontLeftLight.add(spotLight);
-	// // spotLight.updateMatrixWorld();
-	// spotLight.target.position.copy(new THREE.Vector3(x, y, z));
-	// spotLight.add(spotLight.target);
-	// // spotLight.target.position.copy(new THREE.Vector3(x, y, z).applyMatrix4(spotLight.matrixWorld));
-	// // spotLight.target.updateMatrixWorld();
-	// // console.log(spotLight.target);
-	// // var spotH = new THREE.SpotLightHelper(spotLight);
-	// //PROJECT.scene.add(spotH);
-	// addCone(spotLight);
-	// //PROJECT.scene.add(newCone(spotLight));
-	// // var sphere = new THREE.Mesh(new THREE.SphereGeometry(50, 16, 16), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
-	// // sphere.position.setFromMatrixPosition(spotLight.target.matrixWorld);
-	// // PROJECT.scene.add(sphere);
 
 }
 
@@ -611,9 +570,16 @@ PROJECT.addEventListeners = function ()
 	// 	}
 	};
 
+	function onKeyPress ( event ) {
+		switch( event.keyCode ) {
+
+		}
+	}
+
 
 	document.addEventListener( 'keydown', onKeyDown, false );
 	document.addEventListener( 'keyup', onKeyUp, false );
+	document.addEventListener( 'keypress', onKeyPress, false);
 }
 /////// END PROJECT ACCESSOR METHODS
 
