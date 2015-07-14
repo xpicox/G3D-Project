@@ -39,6 +39,10 @@ function init()
 	PROJECT.garage.getObjectByName("Pavimento").children[0].material = pianoshader;
 	// PROJECT.addCubeMap();
 
+	PROJECT.animateCarStart();
+
+	document.addEventListener('keypress', function(event) { PROJECT.animateCarEnd(event); });
+
 	initStats();
 
 	render();
@@ -65,7 +69,7 @@ function render() {
 
 	stats.update();
 
-	// PROJECT.car.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), 0.01);
+	TWEEN.update();
 
 	// PROJECT.renderer.render(PROJECT.scene, PROJECT.camera);
 	PROJECT.composer.render();

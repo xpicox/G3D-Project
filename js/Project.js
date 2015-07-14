@@ -259,7 +259,7 @@ PROJECT.initScene = function()
 PROJECT.initCamera = function(fov, aspectRatio, near, far)
 {
 	var camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
-	camera.position.set(0.0,400.0,500.0);
+	camera.position.set(0.0,200.0,500.0);
 	this.camera = camera;
 
 	// Orbit Controlls
@@ -431,17 +431,15 @@ PROJECT.addCarLights = function ()
 
 	}
 
-	var car = this.car;
+		var car = this.car;
 
-	// Spotlight orientation : target positioning
-	var azimuth = -Math.PI/2 + Math.PI/24; // Angle
-	var polar = 7/12*Math.PI;   // Angle
-	var r = 50.0;
-	addLamp(car.getObjectByName("FLLight"), targetPosition(azimuth, polar, r));
-	azimuth -= 2 * Math.PI/24;
-	addLamp(car.getObjectByName("FRLight"), targetPosition(azimuth, polar, r))
-
-
+		// Spotlight orientation : target positioning
+		var azimuth = -Math.PI/2 + Math.PI/24; // Angle
+		var polar = 7/12*Math.PI;   // Angle
+		var r = 50.0;
+		addLamp(car.getObjectByName("FLLight"), targetPosition(azimuth, polar, r));
+		azimuth -= 2 * Math.PI/24;
+		addLamp(car.getObjectByName("FRLight"), targetPosition(azimuth, polar, r));
 
 
 	// frontLeftLight.position.set(0,100,0);
@@ -523,6 +521,217 @@ PROJECT.addCubeMap = function ()
 				
 	PROJECT.scene.add( skyBox );
 }
+
+// Add car animation START
+PROJECT.animateCarStart = function ()
+{
+	var car = this.car;
+
+	// START ANIMATION
+	car.position.z = 1000;
+	car.rotateOnAxis( new THREE.Vector3( 0, 1, 0 ), -Math.PI/2.0 );
+
+	var i = 1;
+
+	var positionStart = { z : 1000 };
+	var targetStart = { z : 0 };
+	var tweenStart = new TWEEN.Tween(positionStart).to(targetStart, 2000);
+
+	var latestTime = 0.0;
+
+	tweenStart.onUpdate(function(time){
+    		car.position.z = positionStart.z;
+
+    		if (time > 0.994)
+    			return;
+
+    		PROJECT.car.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), (time - latestTime) * Math.PI / 2);
+    		latestTime = time;
+
+    		car.children[13].rotateOnAxis( new THREE.Vector3( 0, 0, 1 ), Math.PI/(10 * i * i) );
+    		car.children[14].rotateOnAxis( new THREE.Vector3( 0, 0, 1 ), Math.PI/(10 * i * i) );
+    		car.children[15].rotateOnAxis( new THREE.Vector3( 0, 0, 1 ), Math.PI/(10 * i * i) );
+    		i += 0.005;
+
+    });
+
+    tweenStart.onComplete(this.animateCamera.bind(this));
+
+	tweenStart.delay(500);
+
+	tweenStart.easing(TWEEN.Easing.Quadratic.InOut);
+
+	tweenStart.start();
+
+}
+
+var flag = false;
+
+// Add car animation END
+PROJECT.animateCarEnd = function (event)
+{
+	var car = this.car;
+
+	if( event.keyCode == 115 /* s */ && car.position.x == 0 && flag == false ){
+
+		flag = true;
+
+		// END ANIMATION
+		var i = 1.6;
+
+		var positionEnd = { x : 0 };
+		var targetEnd = { x : -1000 };
+		var tweenEnd = new TWEEN.Tween(positionEnd).to(targetEnd, 2000);
+
+		tweenEnd.onUpdate(function(time){
+			car.position.x = positionEnd.x;
+
+			if (time < 0.006)
+				return;
+
+			car.children[13].rotateOnAxis( new THREE.Vector3( 0, 0, 1 ), Math.PI/(10 * i * i) );
+    		car.children[14].rotateOnAxis( new THREE.Vector3( 0, 0, 1 ), Math.PI/(10 * i * i) );
+    		car.children[15].rotateOnAxis( new THREE.Vector3( 0, 0, 1 ), Math.PI/(10 * i * i) );
+    		i -= 0.005;
+		});
+
+		tweenEnd.delay(500);
+
+		tweenEnd.easing(TWEEN.Easing.Quadratic.InOut);
+
+		tweenEnd.start();
+	}
+
+}
+
+PROJECT.animateCamera = function ()
+{
+	var camera = this.camera;
+	var car = this.car;
+	
+	////////////////////////////////////////////////////////////////////////////
+	var positionAn1 = { y: camera.position.y, z: camera.position.z };
+	var targetAn1 = { y: positionAn1.y + 100, z: positionAn1.z - 150 };
+	var tweenAn1 = new TWEEN.Tween(positionAn1).to(targetAn1, 2000);
+
+	tweenAn1.onUpdate(function(time){
+		camera.position.y = positionAn1.y;	
+		camera.position.z = positionAn1.z;
+	});
+
+	tweenAn1.delay(500);
+	
+	tweenAn1.easing(TWEEN.Easing.Quadratic.InOut);
+	
+	tweenAn1.start();
+	//////////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////////
+	var positionAn2 = { x: camera.position.x, z: targetAn1.z };
+	var targetAn2 = { x: positionAn2.x - 500, z: 0 };
+	var tweenAn2 = new TWEEN.Tween(positionAn2).to(targetAn2, 2000);
+
+	tweenAn2.onUpdate(function(time){
+		camera.position.x = positionAn2.x;
+		camera.position.z = positionAn2.z;
+	});
+
+	tweenAn2.delay(500);
+
+	tweenAn2.easing(TWEEN.Easing.Quadratic.InOut);
+
+	tweenAn1.chain( tweenAn2 );
+	//////////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////////
+	var positionAn3 = { x: targetAn2.x, y: targetAn1.y };
+	var targetAn3 = { x: positionAn3.x - 500, y: 100 };
+	var tweenAn3 = new TWEEN.Tween(positionAn3).to(targetAn3, 2000);
+
+	tweenAn3.onUpdate(function(time){
+		camera.position.x = positionAn3.x;
+		camera.position.y = positionAn3.y;
+	});
+
+	tweenAn3.delay(500);
+
+	tweenAn3.easing(TWEEN.Easing.Quadratic.InOut);
+
+	tweenAn2.chain( tweenAn3 );
+	//////////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////////
+	var positionAn4 = { x: targetAn3.x, y: targetAn3.y, z: targetAn2.z };
+	var targetAn4 = { x: positionAn4.x + 700, y: positionAn4.y + 200, z: positionAn4.z - 300 };
+	var tweenAn4 = new TWEEN.Tween(positionAn4).to(targetAn4, 2000);
+
+	tweenAn4.onUpdate(function(time){
+		camera.position.x = positionAn4.x;
+		camera.position.y = positionAn4.y;
+		camera.position.z = positionAn4.z;
+	});
+
+	tweenAn4.delay(500);
+
+	tweenAn4.easing(TWEEN.Easing.Quadratic.InOut);
+
+	tweenAn3.chain( tweenAn4 );
+	//////////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////////
+	var positionAn5 = { x: targetAn4.x, y: targetAn4.y };
+	var targetAn5 = { x: positionAn5.x + 700, y: positionAn5.y - 250 };
+	var tweenAn5 = new TWEEN.Tween(positionAn5).to(targetAn5, 2000);
+
+	tweenAn5.onUpdate(function(time){
+		camera.position.x = positionAn5.x;
+		camera.position.y = positionAn5.y;
+	});
+
+	tweenAn5.delay(500);
+
+	tweenAn5.easing(TWEEN.Easing.Quadratic.InOut);
+
+	tweenAn4.chain( tweenAn5 );
+	//////////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////////
+	var positionAn6 = { y: targetAn5.y, z: targetAn4.z };
+	var targetAn6 = { y: positionAn6.y + 200, z: positionAn6.z + 550 };
+	var tweenAn6 = new TWEEN.Tween(positionAn6).to(targetAn6, 2000);
+
+	tweenAn6.onUpdate(function(time){
+		camera.position.y = positionAn6.y;
+		camera.position.z = positionAn6.z;
+	});
+
+	tweenAn6.delay(500);
+
+	tweenAn6.easing(TWEEN.Easing.Quadratic.InOut);
+
+	tweenAn5.chain( tweenAn6 );
+	///////////////////////////////////////////////////////////////////////////////
+
+	///////////////////////////////////////////////////////////////////////////////
+	var positionAn7 = { x: targetAn5.x, y: targetAn6.y, z: targetAn6.z };
+	var targetAn7 = { x: 0, y: 200, z: 500 };
+	var tweenAn7 = new TWEEN.Tween(positionAn7).to(targetAn7, 2000);
+
+	tweenAn7.onUpdate(function(time){
+		camera.position.x = positionAn7.x;
+		camera.position.y = positionAn7.y;
+		camera.position.z = positionAn7.z;
+	});
+
+	tweenAn7.delay(500);
+
+	tweenAn7.easing(TWEEN.Easing.Quadratic.InOut);
+
+	tweenAn6.chain( tweenAn7 );
+	///////////////////////////////////////////////////////////////////////////////
+
+}
+
 /////// END PROJECT ACCESSOR METHODS
 
 
