@@ -471,10 +471,14 @@ PROJECT.addCarLights = function ()
 	// Spotlight orientation : target positioning
 	var azimuth = -Math.PI/2 + Math.PI/24; // Angle
 	var polar = 7/12*Math.PI;   // Angle
-	var r = 50.0;
-	car.lights.push(addLamp(car.getObjectByName("FLLight"), targetPosition(azimuth, polar, r)));
+	var r = 100.0;
+	var lamp = car.getObjectByName("FLLight");
+	car.lights.push(addLamp(lamp, targetPosition(azimuth, polar, r)));
 	azimuth -= 2 * Math.PI/24;
+	lamp = car.getObjectByName("FRLight");
+	lamp.position.set(-221, 69, -77);
 	car.lights.push(addLamp(car.getObjectByName("FRLight"), targetPosition(azimuth, polar, r)));
+	console.log(car.lights);
 }
 
 PROJECT.addCubeMap = function ()
