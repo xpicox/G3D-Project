@@ -248,8 +248,7 @@ PROJECT.initCamera = function(fov, aspectRatio, near, far)
 	// Orbit Controlls
 	var cameraControls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
 	this.cameraControls = cameraControls;
-	// TODO REMOVE PAN AND FIX ZOOM IN ZOOM OUT
-	// cameraControls.noPan = true;
+	cameraControls.enabled = false;
 
 	if (this.scene !== undefined)
 		this.scene.add(this.camera);
@@ -561,7 +560,9 @@ PROJECT.animateCarStart = function ()
 
     tweenStart.onComplete(this.animateCamera.bind(this));
 
-	tweenStart.delay(2500);
+	tweenStart.delay(2000);
+	PROJECT.car.lights.forEach(function (l) { l.visible = false; });
+	setTimeout(function() { PROJECT.car.lights.forEach(function (l) { l.visible = true; }); }, 4500);
 
 	tweenStart.easing(TWEEN.Easing.Quadratic.InOut);
 
@@ -572,12 +573,11 @@ PROJECT.animateCarStart = function ()
 var flag = false;
 
 // Add car animation END
-PROJECT.animateCarEnd = function (event)
+PROJECT.animateCarEnd = function()
 {
 	var car = this.car;
 
-	if( event.keyCode == 115 /* s */ && car.position.x == 0 && flag == false ){
-
+	if(car.position.x == 0 && flag == false ){
 		flag = true;
 
 		// END ANIMATION
@@ -626,7 +626,7 @@ PROJECT.animateCamera = function ()
 		camera.updateMatrix();
 	});
 
-	tweenAn1.delay(500);
+	tweenAn1.delay(1500);
 	
 	tweenAn1.easing(TWEEN.Easing.Quadratic.InOut);
 	
@@ -744,6 +744,16 @@ PROJECT.animateCamera = function ()
 
 	tweenAn7.delay(500);
 
+	tweenAn7.onComplete(function()
+	{
+		PROJECT.cameraControls.noPan = true;
+		PROJECT.cameraControls.noZoom = true;
+		PROJECT.cameraControls.minPolarAngle = THREE.Math.degToRad(30.0);
+		PROJECT.cameraControls.maxPolarAngle = Math.PI / 2.0 - THREE.Math.degToRad(5.0);
+		PROJECT.cameraControls.enabled = true;
+		PROJECT.addEventListeners();
+	});
+
 	tweenAn7.easing(TWEEN.Easing.Quadratic.InOut);
 
 	tweenAn6.chain( tweenAn7 );
@@ -765,16 +775,7 @@ PROJECT.addEventListeners = function ()
 
 	function onKeyDown ( event ) {
 		switch( event.keyCode ) {
-			case 76: /*L*/
-				if (PROJECT.car.lights)
-					PROJECT.car.lights.forEach(function(element){
-						if(element.visible)
-							element.visible = false;
-						else
-							element.visible = true;
-					});
-				console.log(PROJECT.car.lights);
-				break;
+			
 			// case 38: /*up*/	controlsGallardo.moveForward = true; break;
 			// case 87: /*W*/ 	controlsVeyron.moveForward = true; break;
 			// case 40: /*down*/controlsGallardo.moveBackward = true; break;
@@ -808,7 +809,19 @@ PROJECT.addEventListeners = function ()
 
 	function onKeyPress ( event ) {
 		switch( event.keyCode ) {
-			
+			case 115:
+				PROJECT.animateCarEnd();
+				break;
+
+			case 108:
+				if (PROJECT.car.lights)
+					PROJECT.car.lights.forEach(function(element){
+						if(element.visible)
+							element.visible = false;
+						else
+							element.visible = true;
+					});
+				break;
 		}
 	}
 

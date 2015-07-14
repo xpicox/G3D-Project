@@ -38,10 +38,8 @@ function init()
 
 	// PROJECT.garage.getObjectByName("Pavimento").children[0].material = pianoshader;
 	// PROJECT.addCubeMap();
-	PROJECT.addEventListeners();
 
 	PROJECT.animateCarStart();
-	document.addEventListener('keypress', function(event) { PROJECT.animateCarEnd(event); });
 
 	initGUI();
 	initStats();
