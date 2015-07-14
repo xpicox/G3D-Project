@@ -54,6 +54,7 @@ PROJECT.ShaderManager.prototype = {
 		if(mat.lights) {
 			mat.uniforms = THREE.UniformsUtils.merge([
 			THREE.UniformsLib['lights'],
+			THREE.UniformsLib['shadowmap'],
 			mat.uniforms
 			]);
 		}
@@ -184,7 +185,9 @@ PROJECT.AssetManager.prototype = {
 //// Initialize a WebGLRenderer
 PROJECT.initRenderer = function()
 {
-	var renderer = new THREE.WebGLRenderer({ antialias: true, alpha : true });
+	var renderer = new THREE.WebGLRenderer({ antialias: true, alpha : true});
+	renderer.shadowMapEnabled = true;
+	renderer.shadowMapType = THREE.PCFSoftShadowMap;
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( 0x000000 );
@@ -195,6 +198,7 @@ PROJECT.initRenderer = function()
 	this.renderer = renderer;
 	document.body.appendChild( renderer.domElement );
 }
+
 // dependencies: renderer,camera, lights
 PROJECT.initComposer = function()
 {
@@ -257,55 +261,30 @@ PROJECT.addLights = function ()
 	if (garage !== undefined) 
 	{
 		this.lights = [];
-		var lampioni = garage.getObjectByName("Lampione");
-		lampioni.name = "Lampioni";
-		var lampione = lampioni.getObjectByName("Lampione");
-		lampione.updateMatrixWorld();
-		var spotLight = new THREE.SpotLight(0xFFFFFF);
-		spotLight.position.setFromMatrixPosition( lampione.matrixWorld );
-		spotLight.position.set(0.0, 600.0, 0.0);
-		spotLight.intensity = 1.0;
-		spotLight.exponent = 25.0;
-		spotLight.angle = Math.PI/4;
-		var sphere = new THREE.Mesh(new THREE.SphereGeometry(50, 16, 16), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
-		//sphere.position = spotLight.position.clone();
-		sphere.position.setFromMatrixPosition( lampione.matrixWorld );
-		this.scene.add(sphere);
-		this.scene.add(spotLight);
-		this.lights.push(spotLight);
+		function addLight(position, exponent)
+		{
+			var spotLight = new THREE.SpotLight(0xFFFFFF);
+			spotLight.castShadow = true;
+			spotLight.shadowMapWidth = 2048;
+			spotLight.shadowMapHeight = 2048;
+			spotLight.shadowCameraNear = 50;
+			spotLight.shadowCameraFar = 4000;
+			spotLight.shadowCameraFov = 90;
+			spotLight.shadowCameraVisible = false;
+			spotLight.shadowDarkness = 0.5;
+			spotLight.shadowBias = 0.01;
+			spotLight.position.copy(position);
+			spotLight.intensity = 1.0;
+			spotLight.exponent = exponent;
+			spotLight.angle = Math.PI/4;
 
-		var spotLight2 = new THREE.SpotLight(0xFFFFFF);
-		spotLight2.position.set(0.0, 100.0, 600.0);
-		spotLight2.intensity = 1.0;
-		spotLight2.exponent = 2.0;
-		spotLight2.angle = Math.PI/4;
-		this.lights.push(spotLight2);
-		this.scene.add(spotLight2);
+			PROJECT.lights.push(spotLight);
+			PROJECT.scene.add(spotLight);
+		}
 
-		var spotLight3 = new THREE.SpotLight(0xFFFFFF);
-		spotLight3.position.set(0.0, 100.0, -600.0);
-		spotLight3.intensity = 1.0;
-		spotLight3.exponent = 2.0;
-		spotLight3.angle = Math.PI/4;
-		spotLight.updateMatrixWorld();
-		this.lights.push(spotLight3);
-		this.scene.add(spotLight3);
-
-		// lampione = lampioni.getObjectByName("Lampione001");
-		// spotLight = new THREE.SpotLight(0xFFFFFF);
-		// spotLight.position.setFromMatrixPosition( lampione.matrixWorld );
-		// spotLight.intensity = 1.0;
-		// spotLight.exponent = 10.0;
-		// this.lights.push(spotLight);
-		// sphere = new THREE.Mesh(new THREE.SphereGeometry(50, 16, 16), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
-		// sphere.position.clone(spotLight.position);
-		// sphere.position.setFromMatrixPosition( lampione.matrixWorld );
-		// this.scene.add(sphere);
-		// this.scene.add(spotLight);
-
-		// var dirLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-		// dirLight.position.setFromMatrixPosition( lampione.matrixWorld );
-		// this.scene.add(dirLight);
+		addLight(new THREE.Vector3(0.0, 500.0, 0.0), 10.0);
+		addLight(new THREE.Vector3(0.0, 400.0, 400.0), 4.0);
+		addLight(new THREE.Vector3(0.0, 400.0, -400.0), 4.0);
 
 	} else 
 		console.warn("Garage not laoded!");
@@ -317,6 +296,8 @@ PROJECT.addCar = function ()
 	if (!car)
 		return;	
 	
+	car.castShadow = true;
+
 	function getEnvironment() {
 
 		var cubeMap = new THREE.CubeTexture( [] , THREE.CubeReflectionMapping);
@@ -343,11 +324,19 @@ PROJECT.addCar = function ()
 		return cubeMap;
 
 	}
-
+	
 	var mainBody = car.getObjectByName("MainBody").children[0]; // Mesh Main Body
 	mainBody.material = this.shaderManager["lamborghiniMainBody"];
 	mainBody.material.uniforms.environment.value = getEnvironment();
-	
+
+	car.traverse(function (c)
+	{
+		if (c instanceof THREE.Mesh)
+		{
+			c.castShadow = true;
+			c.material.side = THREE.DoubleSide;
+		}
+	});
 
 	if (!this.scene)
 		return;
@@ -362,20 +351,32 @@ PROJECT.addGarage = function ()
 {
 
 	var garage = this.assetsManager.assets["garage"];
+	garage.traverse(function (c)
+	{
+		if (c instanceof THREE.Mesh)
+		{
+			c.castShadow = true;
+			c.receiveShadow = true;
+			c.material.side = THREE.DoubleSide;
+		}
+	});
+
 	if (!garage)
 		return;
 
 	var pavimento = garage.getObjectByName("Pavimento").children[0];
-	pavimento.material = this.shaderManager["GarageFloor"];
+	pavimento.receiveShadow = true;
+	pavimento.castShadow = false;
+	pavimento.material = this.shaderManager["GarageFloor"]; // new THREE.MeshPhongMaterial({color : 0xAA98BB });
 	pavimento.material.uniforms.DiffuseMap.value = this.assetsManager.assets["garageDiffuseMap"];
 	this.assetsManager.assets["garageDiffuseMap"].wrapS = THREE.RepeatWrapping;
 	this.assetsManager.assets["garageDiffuseMap"].wrapT = THREE.RepeatWrapping;
-	this.assetsManager.assets["garageDiffuseMap"].generateMipmaps = true;
-	this.assetsManager.assets["garageDiffuseMap"].needsUpdate = true;
+	// this.assetsManager.assets["garageDiffuseMap"].generateMipmaps = true;
+	// this.assetsManager.assets["garageDiffuseMap"].needsUpdate = true;
 	pavimento.material.uniforms.NormalMap.value = this.assetsManager.assets["garageNormalMap"];
 	this.assetsManager.assets["garageNormalMap"].wrapS = THREE.RepeatWrapping;
 	this.assetsManager.assets["garageNormalMap"].wrapT = THREE.RepeatWrapping;
-	this.assetsManager.assets["garageDiffuseMap"].needsUpdate = true;
+	// this.assetsManager.assets["garageDiffuseMap"].needsUpdate = true;
 
 
 
@@ -396,7 +397,7 @@ PROJECT.addCarLights = function ()
 
 	function addCone(light)
 	{
-		var geometry = new THREE.CylinderGeometry( 0.001, 1, 1, 16, 1, false );
+		var geometry = new THREE.CylinderGeometry( 0.0, 1, 1, 32, 1, true );
 		geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, - 0.5, 0 ) );
 		geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );
 		var material = PROJECT.shaderManager["LightCone"].clone();
@@ -424,8 +425,8 @@ PROJECT.addCarLights = function ()
 		vector2.setFromMatrixPosition( light.target.matrixWorld );
 		var dir = vector2.sub( vector );
 		cone.lookAt( dir );
-		cone.translateOnAxis(new THREE.Vector3(0.0, 0.0, 1.0), 5);
-		// cone.material.color.copy( light.color ).multiplyScalar( light.intensity );
+		cone.translateOnAxis(new THREE.Vector3(0.0, 0.0, 1.0), 0);
+
 	}
 
 	function targetPosition(azimuth, polar, radius)
@@ -440,12 +441,21 @@ PROJECT.addCarLights = function ()
 	{
 
 		lamp.updateMatrixWorld();
-		var spotLight = new THREE.SpotLight(0xFFFFFF);
+		var spotLight = new THREE.SpotLight(0xcbe9ff);
 		spotLight.position.set(-20, 0, 0);
 		spotLight.intensity = 1.0;
 		spotLight.exponent = 5.0;
 		spotLight.distance = 1500;
 		spotLight.angle = Math.PI/8;
+		spotLight.castShadow = false;
+		spotLight.shadowMapWidth = 2048;
+		spotLight.shadowMapHeight = 2048;
+		spotLight.shadowCameraNear = 50;
+		spotLight.shadowCameraFar = 4000;
+		spotLight.shadowCameraFov = 45;
+		spotLight.shadowCameraVisible = false;
+		spotLight.shadowDarkness = 0.5;
+		spotLight.shadowBias = 0.01;
 
 		lamp.add(spotLight);
 		spotLight.target.position.copy(targetPosition);
@@ -572,7 +582,7 @@ PROJECT.addEventListeners = function ()
 
 	function onKeyPress ( event ) {
 		switch( event.keyCode ) {
-
+			
 		}
 	}
 

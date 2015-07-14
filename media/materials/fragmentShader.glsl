@@ -50,6 +50,26 @@ uniform float ambientIntensity;
 	uniform vec3 directionalLightDirection[ MAX_DIR_LIGHTS ];
 #endif
 
+#ifdef USE_SHADOWMAP
+
+	uniform sampler2D shadowMap[ MAX_SHADOWS ];
+	uniform vec2 shadowMapSize[ MAX_SHADOWS ];
+
+	uniform float shadowDarkness[ MAX_SHADOWS ];
+	uniform float shadowBias[ MAX_SHADOWS ];
+
+	varying vec4 vShadowCoord[ MAX_SHADOWS ];
+
+	float unpackDepth( const in vec4 rgba_depth ) {
+
+		const vec4 bit_shift = vec4( 1.0 / ( 256.0 * 256.0 * 256.0 ), 1.0 / ( 256.0 * 256.0 ), 1.0 / 256.0, 1.0 );
+		float depth = dot( rgba_depth, bit_shift );
+		return depth;
+
+	}
+
+#endif
+
 float saturate(float v)
 {
 	return clamp(v, 0.0, 1.0);
@@ -212,8 +232,89 @@ void main()
     color += env_fresnel * reflectivity * reflection;
 	
 #endif
-	
+
 	color += real_albedo * ambientIntensity;
+
+//////////////// 		SHADOW MAPPING        ///////////////////
+
+#ifdef USE_SHADOWMAP
+
+
+	float fDepth;
+	
+	vec3 shadowColor = vec3( 1.0 );
+	
+	for(int i = 0; i < MAX_SHADOWS; i++)
+	{
+		vec3 shadowCoord = vShadowCoord[ i ].xyz / vShadowCoord[ i ].w;
+		bvec4 inFrustumVec = bvec4 ( shadowCoord.x>= 0.0, shadowCoord.x <= 1.0, shadowCoord.y>= 0.0, shadowCoord.y <= 1.0 );
+		bool inFrustum = all( inFrustumVec );
+		bvec2 frustumTestVec = bvec2( inFrustum, shadowCoord.z <= 1.0 );
+		bool frustumTest = all( frustumTestVec );
+		
+		if (frustumTest)
+		{
+			shadowCoord.z += shadowBias[ i ];
+			float shadow = 0.0;
+			
+			float xPixelOffset = 1.0 / shadowMapSize[ i ].x;
+			float yPixelOffset = 1.0 / shadowMapSize[ i ].y;
+			
+			float dx0 = -1.0 * xPixelOffset;
+			float dy0 = -1.0 * yPixelOffset;
+			float dx1 = 1.0 * xPixelOffset;
+			float dy1 = 1.0 * yPixelOffset;
+			
+			mat3 shadowKernel;
+			mat3 depthKernel;
+			
+			depthKernel[0][0] = unpackDepth( texture2D( shadowMap[ i ], shadowCoord.xy + vec2( dx0, dy0 ) ) );
+			depthKernel[0][1] = unpackDepth( texture2D( shadowMap[ i ], shadowCoord.xy + vec2( dx0, 0.0 ) ) );
+			depthKernel[0][2] = unpackDepth( texture2D( shadowMap[ i ], shadowCoord.xy + vec2( dx0, dy1 ) ) );
+			depthKernel[1][0] = unpackDepth( texture2D( shadowMap[ i ], shadowCoord.xy + vec2( 0.0, dy0 ) ) );
+			depthKernel[1][1] = unpackDepth( texture2D( shadowMap[ i ], shadowCoord.xy ) );
+			depthKernel[1][2] = unpackDepth( texture2D( shadowMap[ i ], shadowCoord.xy + vec2( 0.0, dy1 ) ) );
+			depthKernel[2][0] = unpackDepth( texture2D( shadowMap[ i ], shadowCoord.xy + vec2( dx1, dy0 ) ) );
+			depthKernel[2][1] = unpackDepth( texture2D( shadowMap[ i ], shadowCoord.xy + vec2( dx1, 0.0 ) ) );
+			depthKernel[2][2] = unpackDepth( texture2D( shadowMap[ i ], shadowCoord.xy + vec2( dx1, dy1 ) ) );
+			
+			vec3 shadowZ = vec3( shadowCoord.z );
+			
+			shadowKernel[0] = vec3(lessThan(depthKernel[0], shadowZ ));
+			shadowKernel[0] *= vec3(0.25);
+			shadowKernel[1] = vec3(lessThan(depthKernel[1], shadowZ ));
+			shadowKernel[1] *= vec3(0.25);
+			shadowKernel[2] = vec3(lessThan(depthKernel[2], shadowZ ));
+			shadowKernel[2] *= vec3(0.25);
+			
+			vec2 fractionalCoord = 1.0 - fract( shadowCoord.xy * shadowMapSize[i].xy );
+			
+			shadowKernel[0] = mix( shadowKernel[1], shadowKernel[0], fractionalCoord.x );
+			shadowKernel[1] = mix( shadowKernel[2], shadowKernel[1], fractionalCoord.x );
+			
+			vec4 shadowValues;
+			shadowValues.x = mix( shadowKernel[0][1], shadowKernel[0][0], fractionalCoord.y );
+			shadowValues.y = mix( shadowKernel[0][2], shadowKernel[0][1], fractionalCoord.y );
+			shadowValues.z = mix( shadowKernel[1][1], shadowKernel[1][0], fractionalCoord.y );
+			shadowValues.w = mix( shadowKernel[1][2], shadowKernel[1][1], fractionalCoord.y );
+			
+			shadow = dot( shadowValues, vec4( 1.0 ) );
+			
+			shadowColor *= vec3( ( 1.0 - shadowDarkness[ i ] * shadow ) );
+		
+		} else {
+
+			// shadowColor *= vec3(shadowDarkness[ i ]);
+		}
+	
+	}
+	
+	color *= shadowColor;
+
+#endif
+
+
+//////////////// 		END SHADOW MAPPING        ///////////////////
 
 	gl_FragColor = pow(vec4(color, 1.0), vec4(1.0/ GAMMA));
 

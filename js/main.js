@@ -39,6 +39,7 @@ function init()
 	// PROJECT.garage.getObjectByName("Pavimento").children[0].material = pianoshader;
 	// PROJECT.addCubeMap();
 	PROJECT.addEventListeners();
+
 	initGUI();
 	initStats();
 
