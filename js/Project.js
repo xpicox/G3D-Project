@@ -261,7 +261,7 @@ PROJECT.addLights = function ()
 	if (garage !== undefined) 
 	{
 		this.lights = [];
-		function addLight(position, exponent)
+		function addLight(position, exponent, intensity)
 		{
 			var spotLight = new THREE.SpotLight(0xFFFFFF);
 			spotLight.castShadow = true;
@@ -274,7 +274,7 @@ PROJECT.addLights = function ()
 			spotLight.shadowDarkness = 0.5;
 			spotLight.shadowBias = 0.01;
 			spotLight.position.copy(position);
-			spotLight.intensity = 1.0;
+			spotLight.intensity = intensity;
 			spotLight.exponent = exponent;
 			spotLight.angle = Math.PI/4;
 
@@ -282,9 +282,9 @@ PROJECT.addLights = function ()
 			PROJECT.scene.add(spotLight);
 		}
 
-		addLight(new THREE.Vector3(0.0, 500.0, 0.0), 10.0);
-		addLight(new THREE.Vector3(0.0, 400.0, 400.0), 4.0);
-		addLight(new THREE.Vector3(0.0, 400.0, -400.0), 4.0);
+		addLight(new THREE.Vector3(0.0, 500.0, 0.0), 10.0, 0.8);
+		addLight(new THREE.Vector3(0.0, 400.0, 400.0), 4.0, 1.0);
+		addLight(new THREE.Vector3(0.0, 400.0, -400.0), 4.0, 1.0);
 
 	} else 
 		console.warn("Garage not laoded!");
@@ -557,7 +557,7 @@ PROJECT.animateCarStart = function ()
 
     tweenStart.onComplete(this.animateCamera.bind(this));
 
-	tweenStart.delay(500);
+	tweenStart.delay(2500);
 
 	tweenStart.easing(TWEEN.Easing.Quadratic.InOut);
 
@@ -608,6 +608,7 @@ PROJECT.animateCamera = function ()
 {
 	var camera = this.camera;
 	var car = this.car;
+	var origin = new THREE.Vector3(0.0, 0.0, 0.0);
 	
 	////////////////////////////////////////////////////////////////////////////
 	var positionAn1 = { y: camera.position.y, z: camera.position.z };
@@ -617,6 +618,8 @@ PROJECT.animateCamera = function ()
 	tweenAn1.onUpdate(function(time){
 		camera.position.y = positionAn1.y;	
 		camera.position.z = positionAn1.z;
+		camera.lookAt(origin);
+		camera.updateMatrix();
 	});
 
 	tweenAn1.delay(500);
@@ -634,6 +637,8 @@ PROJECT.animateCamera = function ()
 	tweenAn2.onUpdate(function(time){
 		camera.position.x = positionAn2.x;
 		camera.position.z = positionAn2.z;
+		camera.lookAt(origin);
+		camera.updateMatrix();
 	});
 
 	tweenAn2.delay(500);
@@ -651,6 +656,8 @@ PROJECT.animateCamera = function ()
 	tweenAn3.onUpdate(function(time){
 		camera.position.x = positionAn3.x;
 		camera.position.y = positionAn3.y;
+		camera.lookAt(origin);
+		camera.updateMatrix();
 	});
 
 	tweenAn3.delay(500);
@@ -669,6 +676,8 @@ PROJECT.animateCamera = function ()
 		camera.position.x = positionAn4.x;
 		camera.position.y = positionAn4.y;
 		camera.position.z = positionAn4.z;
+		camera.lookAt(origin);
+		camera.updateMatrix();
 	});
 
 	tweenAn4.delay(500);
@@ -686,6 +695,8 @@ PROJECT.animateCamera = function ()
 	tweenAn5.onUpdate(function(time){
 		camera.position.x = positionAn5.x;
 		camera.position.y = positionAn5.y;
+		camera.lookAt(origin);
+		camera.updateMatrix();
 	});
 
 	tweenAn5.delay(500);
@@ -703,6 +714,8 @@ PROJECT.animateCamera = function ()
 	tweenAn6.onUpdate(function(time){
 		camera.position.y = positionAn6.y;
 		camera.position.z = positionAn6.z;
+		camera.lookAt(origin);
+		camera.updateMatrix();
 	});
 
 	tweenAn6.delay(500);
@@ -721,6 +734,8 @@ PROJECT.animateCamera = function ()
 		camera.position.x = positionAn7.x;
 		camera.position.y = positionAn7.y;
 		camera.position.z = positionAn7.z;
+		camera.lookAt(origin);
+		camera.updateMatrix();
 	});
 
 	tweenAn7.delay(500);
