@@ -1,9 +1,6 @@
 #extension GL_EXT_frag_depth : enable
 
 varying vec3 worldPosition; // vertex position in world space
-varying vec3 viewPosition; // vertex position in view space
-varying vec3 n_; // normal in view space
-uniform vec3 targetPos;
 
 #if MAX_SPOT_LIGHTS > 0
 	uniform vec3 spotLightColor[ MAX_SPOT_LIGHTS ];
@@ -18,10 +15,11 @@ uniform vec3 targetPos;
 
 void main ()
 {	
-	float alpha = 0.2;
+	float alpha = 0.1;
 	// Angle between view and direction
 	vec3 spotLightPos = spotLightPosition[ lightIndex ];
 	vec3 v = cameraPosition - spotLightPos;
+	vec3 light_vector = spotLightPos - worldPosition;
 	float dist = length(v);
 	// -(viewMatrix * vec4(spotLightPosition[ lightIndex ], 1.0)).xyz;
 
@@ -29,8 +27,12 @@ void main ()
 	v = normalize(v);
 	// d = normalize(d);
 	float VdotD = dot(v, d);
+    
+   float attenuation = 1.0;
+   if (spotLightDecay[lightIndex] > 0.0)
+       attenuation = pow ( clamp(1.0 - length(light_vector) / spotLightDistance[lightIndex], 0.0, 1.0) , spotLightDecay[lightIndex]);
 
-	if ( (VdotD > spotLightAngleCos[ lightIndex ]))
+	if ( VdotD > spotLightAngleCos[ lightIndex ] )
 	{
 		// Discard front faces if we are inside the cone light
 		if(gl_FrontFacing)
@@ -47,9 +49,11 @@ void main ()
 			discard;
 		#ifdef GL_EXT_frag_depth
 			gl_FragDepthEXT = gl_FragCoord.z;
+			attenuation *= 2.0;
 		#endif
 	}
 
+	
 	vec3 color = vec3(VdotD); // vec3(1.0,1.0,0.0)
-	gl_FragColor = vec4(pow( spotLightColor[lightIndex] , vec3(0.45)), alpha);
+	gl_FragColor = vec4(pow( spotLightColor[lightIndex] , vec3(0.45)), alpha * attenuation);
 }
