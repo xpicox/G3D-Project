@@ -12,7 +12,8 @@
 
 varying vec3 worldPosition; // vertex position in world space
 varying vec3 viewPosition; // vertex position in view space
-varying vec3 n_; // normal in view space
+varying vec3 viewNormal; // normal in view space
+varying vec3 worldNormal;
 varying vec2 uVu;
 
 uniform float repeat;
@@ -163,9 +164,9 @@ void main()
 #endif
 
 #if NORMALMAP
-	vec3 normal = perturbNormal2Arb(viewPosition, normalize(n_));
+	vec3 normal = perturbNormal2Arb(viewPosition, normalize(viewNormal));
 #else
-	vec3 normal = normalize(n_);
+	vec3 normal = normalize(viewNormal);
 #endif
 
 	vec3 view_vector = normalize(-viewPosition);
@@ -220,8 +221,9 @@ void main()
 #endif
 
 #if ENVMAP
-
-	vec3 reflect_vector = reflect(-view_vector, normal);
+	
+	vec3 world_ViewVector = worldPosition - cameraPosition;
+	vec3 reflect_vector = reflect(normalize(world_ViewVector), normalize(worldNormal));
     reflect_vector.x *= -1.0;
     float mipIndex =  alpha * 8.0;
     vec3 reflection = textureCube(environment, reflect_vector, mipIndex).rgb;
