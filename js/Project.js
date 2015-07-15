@@ -601,6 +601,11 @@ PROJECT.animateCarEnd = function()
 
 		tweenEnd.delay(500);
 
+		tweenEnd.onComplete(function() 
+		{
+			PROJECT.car.lights.forEach(function (l) { l.visible = false; });
+		});
+
 		tweenEnd.easing(TWEEN.Easing.Quadratic.InOut);
 
 		tweenEnd.start();
@@ -826,7 +831,6 @@ PROJECT.addEventListeners = function ()
 				break;
 		}
 	}
-
 
 	document.addEventListener( 'keydown', onKeyDown, false );
 	document.addEventListener( 'keyup', onKeyUp, false );
