@@ -752,6 +752,8 @@ PROJECT.animateCamera = function ()
 		PROJECT.cameraControls.maxPolarAngle = Math.PI / 2.0 - THREE.Math.degToRad(5.0);
 		PROJECT.cameraControls.enabled = true;
 		PROJECT.addEventListeners();
+		
+		document.getElementById('footer').style.display = "block";
 	});
 
 	tweenAn7.easing(TWEEN.Easing.Quadratic.InOut);

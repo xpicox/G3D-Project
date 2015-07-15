@@ -4,10 +4,12 @@
 	<style>
 
 		body {
-			font-family: Monospace;				
+			font-family: Helvetica, Sans-serif;
+			font-size: 1.3em;				
 			background-color: #000000;
 			margin: 0px;
 			overflow: hidden;
+			text-align: center;
 		}
 			
 		canvas { 
@@ -21,6 +23,11 @@
     		top:45%;
     		left:30%;
   		}
+
+  		#footer { position: absolute; bottom: 10px; width: 100%; }
+
+  		.h { color: darkturquoise }
+		#c { display: inline; margin-left: 2em; }
 
 	</style>
 	<script src="lib/jquery-2.1.4.min.js"></script>
@@ -55,6 +62,13 @@
 </head>
 <body>
 	<div id="progressbar"></div>
+	<div id="footer" style="display:none">
+		light: <span class="h">L</span>
+
+		<div id="c">
+		start: <span class="h">S</span>
+		</div>
+	</div>
 	<script src="js/main.js"></script>
 </body>
 </html>
