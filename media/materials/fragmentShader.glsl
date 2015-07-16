@@ -3,18 +3,15 @@
 #define GAMMA 2.2
 
 #extension GL_OES_standard_derivatives : enable
-// #define DIFFUSE_MAP 	true/false
-// #define NORMAL_MAP	true/false
 
 varying vec3 worldPosition; // vertex position in world space
-varying vec3 viewPosition; // vertex position in view space
-varying vec3 viewNormal; // normal in view space
-varying vec3 worldNormal;
+varying vec3 viewPosition; 	// vertex position in view space
+varying vec3 viewNormal; 	// normal in view space
+varying vec3 worldNormal; 	// normal in world space
 #if DIFFUSEMAP || NORMALMAP
 	varying vec2 uVu;
+	uniform float repeat;
 #endif
-
-uniform float repeat;
 
 #if DIFFUSEMAP
 uniform sampler2D DiffuseMap;
@@ -36,7 +33,7 @@ uniform float ambientIntensity;
 
 #if MAX_SPOT_LIGHTS > 0
 	uniform vec3 spotLightColor[ MAX_SPOT_LIGHTS ];
-	uniform vec3 spotLightPosition[ MAX_SPOT_LIGHTS ]; // WORLD SPACE POSITION
+	uniform vec3 spotLightPosition[ MAX_SPOT_LIGHTS ]; 	// WORLD SPACE POSITION
 	uniform vec3 spotLightDirection[ MAX_SPOT_LIGHTS ];
 	uniform float spotLightAngleCos[ MAX_SPOT_LIGHTS ];
 	uniform float spotLightExponent[ MAX_SPOT_LIGHTS ];
@@ -59,6 +56,7 @@ uniform float ambientIntensity;
 
 	varying vec4 vShadowCoord[ MAX_SHADOWS ];
 
+	// Reference: http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
 	float unpackDepth( const in vec4 rgba_depth ) {
 
 		const vec4 bit_shift = vec4( 1.0 / ( 256.0 * 256.0 * 256.0 ), 1.0 / ( 256.0 * 256.0 ), 1.0 / 256.0, 1.0 );
@@ -147,7 +145,6 @@ float shadowing(float alpha, float NdV, float NdL, float NdH, float VdH, float L
 {
 	//float k = alpha * sqrt(2.0 / PI); // Schlick remap
 	float k = alpha / 2.0; // Epic remap
-	//float k = pow(0.8 + 0.5 * alpha, 2.0) / 2.0; // Crytek remap
 	return G1(NdL, k) * G1(NdV, k);
 }
 

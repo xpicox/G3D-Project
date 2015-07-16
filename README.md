@@ -15,7 +15,7 @@ We have placed 3 *spotlights* in the following positions:
 2. Second Light : ```new THREE.Vector3(0.0, 400.0, 400.0);```
 3. Third Light : ```new THREE.Vector3(0.0, 400.0, -400.0);```
 
-The fourth and fifth light are the lamps of the car. <br/>
+The fourth and fifth light are the lights of the car. <br/>
 The 3 main spotlights cast shadows.
 ##Materials
 All the objects in the scene have a ```THREE.ShaderMaterial``` with our [*Shader*](https://github.com/xpicox/G3D-Project/blob/master/media/materials/fragmentShader.glsl).<br/>
@@ -33,12 +33,13 @@ The *shader* has the following paramenters:
 - **Diffuse Color** (RGB)
 - **Metallic** : A ```float``` in the range ```[0.0, 1.0]```. 0.0 means dielectric materials (such as plastic) and 1.0 means conductor (metallic) materials. See this [post](https://seblagarde.wordpress.com/2011/08/17/feeding-a-physical-based-lighting-mode/) by Sébastien Lagarde for more details.
 - **Specular Color** : A ```float``` in the range ```[0.0, 1.0]```. Remapped in the range ```[0.02, 0.05]``` for the reasons explained in the link above.
-For dielectric materials this float feeds the Fresnel term as a ```vec3(specular)```; for metallic materials this term is ignored and the diffuse color is taken as the Fresnel term.
-- **Reflectivity** : A ```float``` int the range ```[0.0, 1.0]```. Attenuates the reflects of the environment on the material.
+For dielectric materials this float feeds the Fresnel term as a ```vec3(specular)```; for metallic materials this term is ignored and the diffuse color is taken as the specular color of the material.
+- **Reflectivity** : A ```float``` int the range ```[0.0, 1.0]```. Attenuates the reflection of the environment on the material.
 
-According to Disney BRDF model, metallic materials have no diffuse: the *metallic* parameter that let us switch between dielectric and conductor materials is used to linearly interpolate the *diffuse* and the *specular* terms of the matrial to match one or the other model.
+According to Disney BRDF model, metallic materials have no diffuse: the *metallic* parameter that let us switch between dielectric and conductor materials is used to linearly interpolate the *diffuse* and the *specular* terms of the material to match one or the other model.
 
 ##Interaction
+At the beginning of the presentation we animated the car and the camera in a fancy way to highlight the presented product. Only when the animation ends, the user can interact with the scene. <br/>
 The user is able to inspect the object using the three.js camera controls, chose the car's main body color, turn on/off the car's lights with ```L``` key and let the car go out the scene with the ```S``` key.
 
 ##Post-Processing
