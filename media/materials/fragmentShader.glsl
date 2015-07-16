@@ -14,7 +14,9 @@ varying vec3 worldPosition; // vertex position in world space
 varying vec3 viewPosition; // vertex position in view space
 varying vec3 viewNormal; // normal in view space
 varying vec3 worldNormal;
-varying vec2 uVu;
+#if DIFFUSEMAP || NORMALMAP
+	varying vec2 uVu;
+#endif
 
 uniform float repeat;
 

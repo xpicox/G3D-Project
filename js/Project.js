@@ -1,5 +1,3 @@
-// Come importo le dipendenze? jQuerry Ajax e tante brutte cose...
-
 var PROJECT = { 
 	NAME: "Saul's Garage",
 	STUDENTS: "Picotti V. & Collevati M.",
@@ -213,17 +211,6 @@ PROJECT.initComposer = function()
 	this.camera.updateMatrixWorld(true);
 	this.camera.updateMatrix();
 
-	/// GOD RAYS SHADER
-	// var godRaysEffect = new THREE.ShaderPass( this.shaderManager["SSGodRays"]);
-
-	// var widthH = window.innerWidth / 2, heightH = window.innerHeight / 2;
-	// console.log(window.innerWidth, window.innerHeight);
-	// var pos = new THREE.Vector3();
-	// pos.setFromMatrixPosition(this.lights[3].matrixWorld);
-	// godRaysEffect.uniforms.lightpos.value = pos;
-	// this.godRaysEffect = godRaysEffect;
-	// composer.addPass( godRaysEffect );
-
 	var vignettePP = new THREE.ShaderPass( PROJECT.shaderManager["vignette"] );
     vignettePP.renderToScreen = true;
     composer.addPass( vignettePP );
@@ -323,46 +310,65 @@ PROJECT.addCar = function ()
 		return cubeMap;
 
 	}
+
+	env = getEnvironment();
 	
 	// MainBody
 	var mainBody = car.getObjectByName("MainBody").children[0];
 	mainBody.material = this.shaderManager["lamborghiniMainBody"];
-	mainBody.material.uniforms.environment.value = getEnvironment();
+	mainBody.material.uniforms.environment.value = env;
 
 	// MAIN TRIM
-	//var mainTrim = car.getObjectByName("MainTrim").children[0];
-	//mainTrim.material = this.shaderManager["lamborghiniMainTrim"];
-	//mainTrim.material.uniforms.environment.value = getEnvironment();
+	var mainTrim = car.getObjectByName("MainTrim").children[0];
+	mainTrim.material = this.shaderManager["lamborghiniMainTrim"];
 
 	// REAR EXHAUST INTERIOR
-	//var rearExhaustInterior = car.getObjectByName("RearExhaust_Interior").children[0];
-	//rearExhaustInterior.material = this.shaderManager["lamborghiniRearExhaustInterior"];
-	//rearExhaustInterior.material.uniforms.environment.value = getEnvironment();
+	var rearExhaustInterior = car.getObjectByName("RearExhaust_Interior").children[0];
+	rearExhaustInterior.material = this.shaderManager["lamborghiniWheelDisc"];
+	rearExhaustInterior.material.uniforms.environment.value = env;
 
 	// REAR EXHAUST
-	//var rearExhaust = car.getObjectByName("RearExhaust").children[0];
-	//rearExhaust.material = this.shaderManager["lamborghiniRearExhaust"];
-	//rearExhaust.material.uniforms.environment.value = getEnvironment();
+	var rearExhaust = car.getObjectByName("RearExhaust").children[0];
+	rearExhaust.material = this.shaderManager["lamborghiniWheelDisc"];
+	rearExhaust.material.uniforms.environment.value = env;
 
 	// Glass
 	var glasses = car.getObjectByName("Glass").children[0];
 	glasses.material = this.shaderManager["lamborghiniGlasses"];
-	glasses.material.uniforms.environment.value = getEnvironment();
+	glasses.material.uniforms.environment.value = env;
+
+	// Rear_Shelves
+	var rearShelves = car.getObjectByName("Rear_Shelves").children[0];
+	rearShelves.material = this.shaderManager["lamborghiniGlasses"];
+	rearShelves.material.uniforms.environment.value = env;
 
 	// Mirrors
-	//var mirrors = car.getObjectByName("Mirrors").children[0];
-	//mirrors.material = this.shaderManager["lamborghiniMirrors"];
-	//mirrors.material.uniforms.environment.value = getEnvironment();
+	var mirrors = car.getObjectByName("Mirrors").children[0];
+	mirrors.material = this.shaderManager["lamborghiniMirrors"];
+	mirrors.material.uniforms.environment.value = getEnvironment();
 
 	// SideMirrors
-	//var sideMirrors = car.getObjectByName("SideMirrors").children[0];
-	//sideMirrors.material = this.shaderManager["lamborghiniSideMirrors"];
-	//sideMirrors.material.uniforms.environment.value = getEnvironment();
+	var sideMirrors = car.getObjectByName("SideMirrors").children[0];
+	sideMirrors.material = this.shaderManager["lamborghiniMainTrim"];
+
+	// MainBody_RearLogo
+	var rearLogo = car.getObjectByName("MainBody_RearLogo").children[0];
+	rearLogo.material = this.shaderManager["lamborghiniWheelDisc"];
+	rearLogo.material.uniforms.environment.value = env;
+
+	// MainBody_Front_Logo
+	var frontLogo = car.getObjectByName("MainBody_Front_Logo").children[0];
+	frontLogo.material = this.shaderManager["lamborghiniFrontLogo"];
+	frontLogo.material.uniforms.environment.value = env;
+
+	// Engine
+	var engine = car.getObjectByName("Engine").children[0];
+	engine.material = this.shaderManager["lamborghiniEngine"];
 
 	// FL_Wheel
 	var FLWheel = car.getObjectByName("FL_Wheel").children[0];
 	FLWheel.material = this.shaderManager["lamborghiniWheel"];
-	FLWheel.material.uniforms.environment.value = getEnvironment();
+	FLWheel.material.uniforms.environment.value = env;
 
 	// FL_Tires
 	var FLTires = car.getObjectByName("FL_Tires").children[0];
@@ -371,12 +377,12 @@ PROJECT.addCar = function ()
 	// FL_Wheel_Disc
 	var FLWheelDisc = car.getObjectByName("FL_Wheel_Disc").children[0];
 	FLWheelDisc.material = this.shaderManager["lamborghiniWheelDisc"];
-	FLWheelDisc.material.uniforms.environment.value = getEnvironment();
+	FLWheelDisc.material.uniforms.environment.value = env;
 
 	// FR_Wheel
 	var FRWheel = car.getObjectByName("FR_Wheel").children[0];
 	FRWheel.material = this.shaderManager["lamborghiniWheel"];
-	FRWheel.material.uniforms.environment.value = getEnvironment();
+	FRWheel.material.uniforms.environment.value = env;
 
 	// FR_Tires
 	var FRTires = car.getObjectByName("FR_Tires").children[0];
@@ -385,12 +391,12 @@ PROJECT.addCar = function ()
 	// FR_Wheel_Disc
 	var FRWheelDisc = car.getObjectByName("FR_Wheel_Disc").children[0];
 	FRWheelDisc.material = this.shaderManager["lamborghiniWheelDisc"];
-	FRWheelDisc.material.uniforms.environment.value = getEnvironment();
+	FRWheelDisc.material.uniforms.environment.value = env;
 
 	// R_Wheels
 	var RWheels = car.getObjectByName("R_Wheels").children[0];
 	RWheels.material = this.shaderManager["lamborghiniWheel"];
-	RWheels.material.uniforms.environment.value = getEnvironment();
+	RWheels.material.uniforms.environment.value = env;
 
 	// R_TIres
 	var RTires = car.getObjectByName("R_TIres").children[0];
@@ -399,12 +405,12 @@ PROJECT.addCar = function ()
 	// R_Wheels_Disc
 	var RWheelsDisc = car.getObjectByName("R_Wheels_Disc").children[0];
 	RWheelsDisc.material = this.shaderManager["lamborghiniWheelDisc"];
-	RWheelsDisc.material.uniforms.environment.value = getEnvironment();
+	RWheelsDisc.material.uniforms.environment.value = env;
 
 	// Wheels_Brake
 	var brakes = car.getObjectByName("Wheels_Brake").children[0];
 	brakes.material = this.shaderManager["lamborghiniBrakes"];
-	brakes.material.uniforms.environment.value = getEnvironment();
+	brakes.material.uniforms.environment.value = env;
 
 	car.traverse(function (c)
 	{
@@ -448,8 +454,6 @@ PROJECT.addGarage = function ()
 	pavimento.material.uniforms.DiffuseMap.value = this.assetsManager.assets["garageDiffuseMap"];
 	this.assetsManager.assets["garageDiffuseMap"].wrapS = THREE.RepeatWrapping;
 	this.assetsManager.assets["garageDiffuseMap"].wrapT = THREE.RepeatWrapping;
-	// this.assetsManager.assets["garageDiffuseMap"].generateMipmaps = true;
-	// this.assetsManager.assets["garageDiffuseMap"].needsUpdate = true;
 	pavimento.material.uniforms.NormalMap.value = this.assetsManager.assets["garageNormalMap"];
 	this.assetsManager.assets["garageNormalMap"].wrapS = THREE.RepeatWrapping;
 	this.assetsManager.assets["garageNormalMap"].wrapT = THREE.RepeatWrapping;
@@ -843,7 +847,7 @@ PROJECT.animateCamera = function ()
 	tweenAn7.onComplete(function()
 	{
 		PROJECT.cameraControls.noPan = true;
-		PROJECT.cameraControls.noZoom = true;
+		PROJECT.cameraControls.noZoom = false;
 		PROJECT.cameraControls.minPolarAngle = THREE.Math.degToRad(30.0);
 		PROJECT.cameraControls.maxPolarAngle = Math.PI / 2.0 - THREE.Math.degToRad(5.0);
 		PROJECT.cameraControls.enabled = true;

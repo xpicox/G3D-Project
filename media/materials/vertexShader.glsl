@@ -2,7 +2,9 @@ varying vec3 worldPosition; // vertex position in world space
 varying vec3 viewPosition; // vertex position in view space
 varying vec3 viewNormal; // view space normal
 varying vec3 worldNormal; // world space normal
-varying vec2 uVu;
+#if DIFFUSEMAP || NORMALMAP
+	varying vec2 uVu;
+#endif
 
 #ifdef USE_SHADOWMAP
 
@@ -17,7 +19,9 @@ void main() {
 	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 	viewNormal = normalMatrix * normal;
 	worldNormal = mat3(modelMatrix) * normal;
-	uVu = uv;
+	#if DIFFUSEMAP || NORMALMAP
+		uVu = uv;
+	#endif
 	viewPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
 	worldPosition = (modelMatrix*vec4(position,1.0)).xyz;
 
