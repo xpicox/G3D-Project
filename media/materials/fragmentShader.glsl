@@ -5,10 +5,6 @@
 #extension GL_OES_standard_derivatives : enable
 // #define DIFFUSE_MAP 	true/false
 // #define NORMAL_MAP	true/false
-// #define DIFFUSE :
-// 0 Lambert
-// 1 Disney diffuse
-// 2 Oren-Nayar
 
 varying vec3 worldPosition; // vertex position in world space
 varying vec3 viewPosition; // vertex position in view space
