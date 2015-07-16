@@ -20,7 +20,7 @@ The 3 main spotlights cast shadows.
 ##Materials
 All the objects in the scene have a ```THREE.ShaderMaterial``` with our [*Shader*](https://github.com/xpicox/G3D-Project/blob/master/media/materials/fragmentShader.glsl).<br/>
 The *Fragment shader* implements the following techniques:
-- Microfacets based BRDF with Lambertian diffuse and Cook-Torance specular model with the following terms:
+- Microfacets based BRDF with Lambertian diffuse and Cook-Torrance specular model with the following terms:
  - GGX Normal Distribution Function
  - Schlick approximation for the Fresnel terms
  - Schlick approximation of the Smith Geometric Shadowing
