@@ -11,12 +11,9 @@ PROJECT.JPGTEXTURE = 2;
 PROJECT.SHADER = 3;
 PROJECT.MATERIAL = 4;
 
-//////// PROJECT CONSTANTS AND TYPES
-
-
+//////// END PROJECT CONSTANTS AND TYPES
 
 //////// SHADER MANAGER
-
 PROJECT.ShaderManager = function() {
 	this.materialLoader = new THREE.MaterialLoader();
 }
@@ -241,6 +238,7 @@ PROJECT.initCamera = function(fov, aspectRatio, near, far)
 		this.scene.add(this.camera);
 }
 
+//// Initialize spot lights
 PROJECT.addLights = function ()
 {
 	var garage = this.assetsManager.assets["garage"];
@@ -276,6 +274,7 @@ PROJECT.addLights = function ()
 		console.warn("Garage not laoded!");
 }
 
+//// Initialize car
 PROJECT.addCar = function ()
 {
 	var car = this.assetsManager.assets["lamborghini"];
@@ -299,12 +298,12 @@ PROJECT.addCar = function ()
 			return canvas;
 		};
 
-		cubeMap.images[ 0 ] = getSide( 1, 0 ); // positivex
-		cubeMap.images[ 1 ] = getSide( 3, 0 ); // negativex
-		cubeMap.images[ 2 ] = getSide( 4, 0 ); // positivey
-		cubeMap.images[ 3 ] = getSide( 5, 0 ); // negativey
-		cubeMap.images[ 4 ] = getSide( 0, 0 ); // positivez
-		cubeMap.images[ 5 ] = getSide( 2, 0 );  // negativez
+		cubeMap.images[ 0 ] = getSide( 1, 0 ); // positive x
+		cubeMap.images[ 1 ] = getSide( 3, 0 ); // negative x
+		cubeMap.images[ 2 ] = getSide( 4, 0 ); // positive y
+		cubeMap.images[ 3 ] = getSide( 5, 0 ); // negative y
+		cubeMap.images[ 4 ] = getSide( 0, 0 ); // positive z
+		cubeMap.images[ 5 ] = getSide( 2, 0 );  // negative z
 		cubeMap.needsUpdate = true;
 	
 		return cubeMap;
@@ -318,16 +317,16 @@ PROJECT.addCar = function ()
 	mainBody.material = this.shaderManager["lamborghiniMainBody"];
 	mainBody.material.uniforms.environment.value = env;
 
-	// MAIN TRIM
+	// MainTrim
 	var mainTrim = car.getObjectByName("MainTrim").children[0];
 	mainTrim.material = this.shaderManager["lamborghiniMainTrim"];
 
-	// REAR EXHAUST INTERIOR
+	// RearExhaust_Interior
 	var rearExhaustInterior = car.getObjectByName("RearExhaust_Interior").children[0];
 	rearExhaustInterior.material = this.shaderManager["lamborghiniWheelDisc"];
 	rearExhaustInterior.material.uniforms.environment.value = env;
 
-	// REAR EXHAUST
+	// RearExhaust
 	var rearExhaust = car.getObjectByName("RearExhaust").children[0];
 	rearExhaust.material = this.shaderManager["lamborghiniWheelDisc"];
 	rearExhaust.material.uniforms.environment.value = env;
@@ -426,7 +425,6 @@ PROJECT.addCar = function ()
 
 	this.scene.add(car);
 	PROJECT.car = car;
-	console.log( car );
 }
 
 // Add the garage to the scene
@@ -450,16 +448,14 @@ PROJECT.addGarage = function ()
 	var pavimento = garage.getObjectByName("Pavimento").children[0];
 	pavimento.receiveShadow = true;
 	pavimento.castShadow = false;
-	pavimento.material = this.shaderManager["GarageFloor"]; // new THREE.MeshPhongMaterial({color : 0xAA98BB });
+	pavimento.material = this.shaderManager["GarageFloor"];
 	pavimento.material.uniforms.DiffuseMap.value = this.assetsManager.assets["garageDiffuseMap"];
 	this.assetsManager.assets["garageDiffuseMap"].wrapS = THREE.RepeatWrapping;
 	this.assetsManager.assets["garageDiffuseMap"].wrapT = THREE.RepeatWrapping;
 	pavimento.material.uniforms.NormalMap.value = this.assetsManager.assets["garageNormalMap"];
 	this.assetsManager.assets["garageNormalMap"].wrapS = THREE.RepeatWrapping;
 	this.assetsManager.assets["garageNormalMap"].wrapT = THREE.RepeatWrapping;
-	// this.assetsManager.assets["garageDiffuseMap"].needsUpdate = true;
-	
-	console.log( garage );
+
 	var colonne = garage.getObjectByName("Colonne").children.forEach( function(colonna)
 	{
 		colonna.children[0].material = PROJECT.shaderManager["GarageFloor"].clone();
@@ -479,7 +475,6 @@ PROJECT.addGarage = function ()
 	}
 	this.scene.add(garage);
 	PROJECT.garage = garage;
-	console.log( garage );
 
 }
 
@@ -495,20 +490,15 @@ PROJECT.addCarLights = function ()
 		geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, - 0.5, 0 ) );
 		geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );
 		var material = PROJECT.shaderManager["LightCone"].clone();
-		// material.blending = THREE.AdditiveBlending;
 		material.depthWrite = false;
 		material.transparent = true;
-		material.defines = { lightIndex:  PROJECT.lights.length};	
-		console.log(material.defines.lightIndex);
+		material.defines = { lightIndex:  PROJECT.lights.length};
 		material.side = THREE.DoubleSide;
 		var cone = new THREE.Mesh(geometry, material);
 		cone.name = "Cone";
 		light.add(cone);
 		light.updateMatrixWorld();
 		PROJECT.lights.push(light);
-
-		//console.log(material.defines.lightIndex);
-		//console.log(PROJECT.lights.length);
 
 		var vector = new THREE.Vector3();
 		var vector2 = new THREE.Vector3();	
@@ -572,7 +562,6 @@ PROJECT.addCarLights = function ()
 	lamp = car.getObjectByName("FRLight");
 	lamp.position.set(-221, 69, -77);
 	car.lights.push(addLamp(car.getObjectByName("FRLight"), targetPosition(azimuth, polar, r)));
-	console.log(car.lights);
 }
 
 PROJECT.addCubeMap = function ()
@@ -588,16 +577,15 @@ PROJECT.addCubeMap = function ()
 		canvas.width = size;
 		canvas.height = size;
 		var context = canvas.getContext( '2d' );
-		console.log(PROJECT.assetsManager.assets["garageCubeMap"]);
 		context.drawImage( PROJECT.assetsManager.assets["garageCubeMap"].image, - x * size, - y * size );
 		return canvas;
 	};
-	cubeMap.images[ 0 ] = getSide( 1, 0 ); // positivex
-	cubeMap.images[ 1 ] = getSide( 3, 0 ); // negativex
-	cubeMap.images[ 2 ] = getSide( 4, 0 ); // positivey
-	cubeMap.images[ 3 ] = getSide( 5, 0 ); // negativey
-	cubeMap.images[ 4 ] = getSide( 0, 0 ); // positivez
-	cubeMap.images[ 5 ] = getSide( 2, 0 );  // negativez
+	cubeMap.images[ 0 ] = getSide( 1, 0 ); // positive x
+	cubeMap.images[ 1 ] = getSide( 3, 0 ); // negative x
+	cubeMap.images[ 2 ] = getSide( 4, 0 ); // positive y
+	cubeMap.images[ 3 ] = getSide( 5, 0 ); // negative y
+	cubeMap.images[ 4 ] = getSide( 0, 0 ); // positive z
+	cubeMap.images[ 5 ] = getSide( 2, 0 );  // negative z
 	cubeMap.needsUpdate = true;
 
 	var cubeShader = THREE.ShaderLib['cube'];
@@ -611,7 +599,6 @@ PROJECT.addCubeMap = function ()
 	});
 
 	var boxG = new THREE.BoxGeometry( 2000, 2000, 2000 );
-	// console.log(boxG);
 	var skyBox = new THREE.Mesh(
 		boxG,
 		skyBoxMaterial
@@ -708,13 +695,14 @@ PROJECT.animateCarEnd = function()
 
 }
 
+// Add camera animations
 PROJECT.animateCamera = function ()
 {
 	var camera = this.camera;
 	var car = this.car;
 	var origin = new THREE.Vector3(0.0, 0.0, 0.0);
 	
-	////////////////////////////////////////////////////////////////////////////
+	/////Animation_1////////////////////////////////////////////////////////////
 	var positionAn1 = { y: camera.position.y, z: camera.position.z };
 	var targetAn1 = { y: positionAn1.y + 100, z: positionAn1.z - 150 };
 	var tweenAn1 = new TWEEN.Tween(positionAn1).to(targetAn1, 2000);
@@ -733,7 +721,7 @@ PROJECT.animateCamera = function ()
 	tweenAn1.start();
 	//////////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////////
+	/////Animation_2//////////////////////////////////////////////////////////////
 	var positionAn2 = { x: camera.position.x, z: targetAn1.z };
 	var targetAn2 = { x: positionAn2.x - 500, z: 0 };
 	var tweenAn2 = new TWEEN.Tween(positionAn2).to(targetAn2, 2000);
@@ -752,7 +740,7 @@ PROJECT.animateCamera = function ()
 	tweenAn1.chain( tweenAn2 );
 	//////////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////////
+	/////Animation_3//////////////////////////////////////////////////////////////
 	var positionAn3 = { x: targetAn2.x, y: targetAn1.y };
 	var targetAn3 = { x: positionAn3.x - 500, y: 100 };
 	var tweenAn3 = new TWEEN.Tween(positionAn3).to(targetAn3, 2000);
@@ -771,7 +759,7 @@ PROJECT.animateCamera = function ()
 	tweenAn2.chain( tweenAn3 );
 	//////////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////////
+	/////Animation_4//////////////////////////////////////////////////////////////
 	var positionAn4 = { x: targetAn3.x, y: targetAn3.y, z: targetAn2.z };
 	var targetAn4 = { x: positionAn4.x + 700, y: positionAn4.y + 200, z: positionAn4.z - 300 };
 	var tweenAn4 = new TWEEN.Tween(positionAn4).to(targetAn4, 2000);
@@ -791,7 +779,7 @@ PROJECT.animateCamera = function ()
 	tweenAn3.chain( tweenAn4 );
 	//////////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////////
+	/////Animation_5//////////////////////////////////////////////////////////////
 	var positionAn5 = { x: targetAn4.x, y: targetAn4.y };
 	var targetAn5 = { x: positionAn5.x + 700, y: positionAn5.y - 250 };
 	var tweenAn5 = new TWEEN.Tween(positionAn5).to(targetAn5, 2000);
@@ -810,7 +798,7 @@ PROJECT.animateCamera = function ()
 	tweenAn4.chain( tweenAn5 );
 	//////////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////////
+	/////Animation_6//////////////////////////////////////////////////////////////
 	var positionAn6 = { y: targetAn5.y, z: targetAn4.z };
 	var targetAn6 = { y: positionAn6.y + 200, z: positionAn6.z + 550 };
 	var tweenAn6 = new TWEEN.Tween(positionAn6).to(targetAn6, 2000);
@@ -829,7 +817,7 @@ PROJECT.animateCamera = function ()
 	tweenAn5.chain( tweenAn6 );
 	///////////////////////////////////////////////////////////////////////////////
 
-	///////////////////////////////////////////////////////////////////////////////
+	/////Animation_7///////////////////////////////////////////////////////////////
 	var positionAn7 = { x: targetAn5.x, y: targetAn6.y, z: targetAn6.z };
 	var targetAn7 = { x: 0, y: 200, z: 500 };
 	var tweenAn7 = new TWEEN.Tween(positionAn7).to(targetAn7, 2000);
@@ -847,7 +835,7 @@ PROJECT.animateCamera = function ()
 	tweenAn7.onComplete(function()
 	{
 		PROJECT.cameraControls.noPan = true;
-		PROJECT.cameraControls.noZoom = false;
+		PROJECT.cameraControls.noZoom = true;
 		PROJECT.cameraControls.minPolarAngle = THREE.Math.degToRad(30.0);
 		PROJECT.cameraControls.maxPolarAngle = Math.PI / 2.0 - THREE.Math.degToRad(5.0);
 		PROJECT.cameraControls.enabled = true;
@@ -863,6 +851,7 @@ PROJECT.animateCamera = function ()
 
 }
 
+// Add events
 PROJECT.addEventListeners = function ()
 {
 	function onWindowResize() {
@@ -874,40 +863,6 @@ PROJECT.addEventListeners = function ()
 	}
 
 	window.addEventListener( 'resize', onWindowResize, false );
-
-	function onKeyDown ( event ) {
-		switch( event.keyCode ) {
-			
-			// case 38: /*up*/	controlsGallardo.moveForward = true; break;
-			// case 87: /*W*/ 	controlsVeyron.moveForward = true; break;
-			// case 40: /*down*/controlsGallardo.moveBackward = true; break;
-			// case 83: /*S*/ 	 controlsVeyron.moveBackward = true; break;
-			// case 37: /*left*/controlsGallardo.moveLeft = true; break;
-			// case 65: /*A*/   controlsVeyron.moveLeft = true; break;
-			// case 39: /*right*/controlsGallardo.moveRight = true; break;
-			// case 68: /*D*/    controlsVeyron.moveRight = true; break;
-			// case 49: /*1*/	setCurrentCar( "gallardo", "center" ); break;
-			// case 50: /*2*/	setCurrentCar( "veyron", "center" ); break;
-			// case 51: /*3*/	setCurrentCar( "gallardo", "front" ); break;
-			// case 52: /*4*/	setCurrentCar( "veyron", "front" ); break;
-			// case 53: /*5*/	setCurrentCar( "gallardo", "back" ); break;
-			// case 54: /*6*/	setCurrentCar( "veyron", "back" ); break;
-			// case 78: /*N*/   vdir *= -1; break;
-			// case 66: /*B*/   blur = !blur; break;
-		}
-	};
-	function onKeyUp ( event ) {
-	// 	switch( event.keyCode ) {
-	// 		case 38: /*up*/controlsGallardo.moveForward = false; break;
-	// 		case 87: /*W*/ controlsVeyron.moveForward = false; break;
-	// 		case 40: /*down*/controlsGallardo.moveBackward = false; break;
-	// 		case 83: /*S*/ 	 controlsVeyron.moveBackward = false; break;
-	// 		case 37: /*left*/controlsGallardo.moveLeft = false; break;
-	// 		case 65: /*A*/ 	 controlsVeyron.moveLeft = false; break;
-	// 		case 39: /*right*/controlsGallardo.moveRight = false; break;
-	// 		case 68: /*D*/ 	  controlsVeyron.moveRight = false; break;
-	// 	}
-	};
 
 	function onKeyPress ( event ) {
 		switch( event.keyCode ) {
@@ -927,17 +882,7 @@ PROJECT.addEventListeners = function ()
 		}
 	}
 
-	document.addEventListener( 'keydown', onKeyDown, false );
-	document.addEventListener( 'keyup', onKeyUp, false );
 	document.addEventListener( 'keypress', onKeyPress, false);
 }
 
 /////// END PROJECT ACCESSOR METHODS
-
-
-
-
-
-
-
-
