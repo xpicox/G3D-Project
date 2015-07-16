@@ -75,7 +75,22 @@
 			"name"	: "spotLightFragmentShader",
 			"type" 	: "SHADER",
 			"url" 	: "media/materials/spotLightFragmentShader.glsl"
+		},
+
+		{
+			"constructor" : "Asset",
+			"name"	: "vignetteVertexShader",
+			"type" 	: "SHADER",
+			"url" 	: "media/materials/vertexShaderVignette.glsl"
+		},
+
+		{
+			"constructor" : "Asset",
+			"name"	: "vignetteFragmentShader",
+			"type" 	: "SHADER",
+			"url" 	: "media/materials/fragmentShaderVignette.glsl"
 		}
+
 
 	],
 
@@ -92,12 +107,232 @@
 									"NORMALMAP" : 0
 								  },
 			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 1.0, "y" : 0.71, "z" : 0.29 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.5 },
+									"metallic"			: 	{ "type" : "f", "value" : 1.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.8 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 0.1 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "lamborghiniMainTrim",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 1,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
+								  },
+			"uniforms"			: {
 									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 1.0, "y" : 0.76, "z" : 0.33 } },
 									"roughness"			: 	{ "type" : "f", "value" : 0.5 },
 									"metallic"			: 	{ "type" : "f", "value" : 1.0 },
 									"specular" 			: 	{ "type" : "f", "value" : 0.8 },
 									"environment"		: 	{ "type" : "t", "value" : null },
 									"reflectivity" 		:   { "type" : "f", "value" : 0.1 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "lamborghiniRearExhaustInterior",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 1,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 1.0, "y" : 0.76, "z" : 0.33 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.5 },
+									"metallic"			: 	{ "type" : "f", "value" : 1.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.8 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 0.1 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "lamborghiniRearExhaust",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 1,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.0, "y" : 0.0, "z" : 0.0 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.1 },
+									"metallic"			: 	{ "type" : "f", "value" : 0.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.9 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 1.0 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "lamborghiniGlasses",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 1,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.0, "y" : 0.0, "z" : 0.0 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.1 },
+									"metallic"			: 	{ "type" : "f", "value" : 0.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.9 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 1.0 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "lamborghiniMirrors",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 1,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.0, "y" : 0.0, "z" : 0.0 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.1 },
+									"metallic"			: 	{ "type" : "f", "value" : 0.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.9 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 1.0 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "lamborghiniSideMirrors",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 1,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.0, "y" : 0.0, "z" : 0.0 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.1 },
+									"metallic"			: 	{ "type" : "f", "value" : 0.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.9 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 1.0 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "lamborghiniWheel",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 1,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.03, "y" : 0.03, "z" : 0.03 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.2 },
+									"metallic"			: 	{ "type" : "f", "value" : 0.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.7 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 1.0 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "lamborghiniTires",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 0,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.0, "y" : 0.0, "z" : 0.0 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.6 },
+									"metallic"			: 	{ "type" : "f", "value" : 0.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.8 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 0.0 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "lamborghiniWheelDisc",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 1,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 0.91, "y" : 0.92, "z" : 0.92 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.2 },
+									"metallic"			: 	{ "type" : "f", "value" : 0.8 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.7 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 0.5 },
+									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
+								  },
+			"lights"			: true
+		},
+		{
+			"name" 				: "lamborghiniBrakes",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "uberVertexShader",
+			"fragmentShader" 	: "uberFragmentShader",
+			"defines"			: {
+									"DIFFUSE"	: 0,
+									"ENVMAP" 	: 1,
+									"DIFFUSEMAP": 0,
+									"NORMALMAP" : 0
+								  },
+			"uniforms"			: {
+									"diffuse_color"		: 	{ "type" : "v3", "value" : { "x" : 1.0, "y" : 0.0, "z" : 0.0 } },
+									"roughness"			: 	{ "type" : "f", "value" : 0.3 },
+									"metallic"			: 	{ "type" : "f", "value" : 0.0 },
+									"specular" 			: 	{ "type" : "f", "value" : 0.7 },
+									"environment"		: 	{ "type" : "t", "value" : null },
+									"reflectivity" 		:   { "type" : "f", "value" : 1.0 },
 									"ambientIntensity"  : 	{ "type" : "f", "value" : 0.01 }
 								  },
 			"lights"			: true
@@ -161,6 +396,20 @@
 								  },
 			"lights"			: true,
 			"transparent"		: true
+		},
+
+		{
+			"name" 				: "vignette",
+			"type"				: "ShaderMaterial",
+			"vertexShader"		: "vignetteVertexShader",
+			"fragmentShader" 	: "vignetteFragmentShader",
+			"uniforms"			: {
+
+									"tDiffuse": { "type": "t", "value": null },
+									"offset":   { "type": "f", "value": 0.5 },
+									"darkness": { "type": "f", "value": 0.5 }
+
+								  }
 		}
 
 	]

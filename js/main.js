@@ -59,46 +59,19 @@ function initGUI()
 		var mat = PROJECT.shaderManager["lamborghiniMainBody"].uniforms;
 		var diff = mat.diffuse_color.value;
 		this.diffuse = [diff.x*255, diff.y*255, diff.z*255];
-		this.roughness = mat.roughness.value;
-		this.specular = mat.specular.value;
-		this.metallic = mat.metallic.value;
-		this.reflectivity = mat.reflectivity.value;
-		this.ambientIntensity = mat.ambientIntensity.value;
+
 	}
 
 	var carGUI = new fields();
-	gui.addColor(carGUI, 'diffuse').onChange(function(value)
+	var element = gui.addColor(carGUI, 'diffuse');
+ 	element.name('Body Color');
+	element.onChange(function(value)
 	{
 		var color = new THREE.Vector3(value[0] / 256.0, value[1] / 256.0, value[2] / 256.0);
 		PROJECT.shaderManager["lamborghiniMainBody"].uniforms.diffuse_color.value = color;
 
 	});
-
-	gui.add(carGUI, 'roughness', 0.0, 1.0).onChange(function(value)
-	{
-		PROJECT.shaderManager["lamborghiniMainBody"].uniforms.roughness.value = value;
-	});
-
-	gui.add(carGUI, 'specular', 0.0, 1.0).onChange(function(value)
-	{
-		PROJECT.shaderManager["lamborghiniMainBody"].uniforms.specular.value = value;
-	});
-
-	gui.add(carGUI, 'metallic', 0.0, 1.0).onChange(function(value)
-	{
-		PROJECT.shaderManager["lamborghiniMainBody"].uniforms.metallic.value = value;
-	});
-
-	gui.add(carGUI, 'reflectivity', 0.0, 1.0).onChange(function(value)
-	{
-		PROJECT.shaderManager["lamborghiniMainBody"].uniforms.reflectivity.value = value;
-	});
-
-	gui.add(carGUI, 'ambientIntensity', 0.0, 1.0).onChange(function(value)
-	{
-		PROJECT.shaderManager["lamborghiniMainBody"].uniforms.ambientIntensity.value = value;
-	});
-
+	
 }
 
 
