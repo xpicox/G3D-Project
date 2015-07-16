@@ -10,6 +10,7 @@ The car model was taken from https://clara.io <br/>
 The garage model and the environment, diffuse and normal textures were realized by http://www.rtview.it <br/>
 ##Light Staging
 We have placed 3 *spotlights* in the following positions:
+
 1. First Light : ```new THREE.Vector3(0.0, 500.0, 0.0);```
 2. Second Light : ```new THREE.Vector3(0.0, 400.0, 400.0);```
 3. Third Light : ```new THREE.Vector3(0.0, 400.0, -400.0);```
